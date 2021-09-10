@@ -104,11 +104,11 @@ export default function Tags() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {data.tags.map(contact => (
-                      <Tr key={contact.id}>
-                        <Td color="gray.500">{contact.name}</Td>
+                    {data.tags.map(tag => (
+                      <Tr key={tag.id}>
+                        <Td color="gray.500">{tag.name}</Td>
                         <Td>
-                          <NextLink href={`contacts/${contact.id}`}
+                          <NextLink href={`tags/${tag.id}`}
                             passHref>
                             <Button
                               as="a"

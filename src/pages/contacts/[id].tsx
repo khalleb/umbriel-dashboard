@@ -1,16 +1,20 @@
-import { Box, Flex, Heading, Text, Table, Thead, Tbody, Tr, Th, Td, Button, useToast, Tag } from "@chakra-ui/react"
+import { Box, Flex, Heading, SimpleGrid, Table, Thead, Tbody, Tr, Th, Td, Button, useToast, HStack } from "@chakra-ui/react"
 import { Header } from '../../components/Header'
 import { RiDeleteBin4Line } from 'react-icons/ri'
 import { Sidebar } from '../../components/Sidebar'
 import { AxiosError } from "axios"
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "react-query"
+import { SubmitHandler, useForm } from 'react-hook-form'
+import * as yup from 'yup';
+import { RiSaveLine } from 'react-icons/ri';
 import Head from 'next/head';
-
+import NextLink from 'next/link';
+import { Input } from '../../components/Form/Input';
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import { api } from "../../services/apiClient"
 import { queryClient } from "../../services/queryClient"
-import { useContactDetails } from "../../hooks/contacts/useContactDetails"
 
 type ContactDetailsProps = {
   contact: {
@@ -33,14 +37,26 @@ type RemoveTagFormData = {
   tag_id: string;
 }
 
+const updateContactFormSchema = yup.object().shape({
+  id: yup.string().required('ID obrigatório'),
+  name: yup.string().required('Nome obrigatório'),
+  email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
+});
+
 export default function ContactDetails({ contact }: ContactDetailsProps) {
   const toast = useToast();
 
-  const { data } = useContactDetails(contact.id, {
-    initialData: {
-      contact
-    }
-  })
+
+  const { register, handleSubmit, formState, setValue } = useForm({
+    resolver: yupResolver(updateContactFormSchema)
+  });
+
+  setValue('id', contact?.id);
+  setValue('name', contact?.name);
+  setValue('email', contact?.email);
+
+  const { errors } = formState;
+
 
   const removeTag = useMutation(
     async (data: RemoveTagFormData) => {
@@ -96,15 +112,44 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
             <Box>
               <Heading size="lg" fontWeight="medium">Detalhes do contato</Heading>
             </Box>
+
+            <HStack>
+              <>
+                <NextLink href="/tags">
+                  <Button size="md" colorScheme="blackAlpha">
+                    Cancelar
+                  </Button>
+                </NextLink>
+                <Button
+                  type="submit"
+                  size="md"
+                  leftIcon={<RiSaveLine size="24" />}
+                  colorScheme="purple">
+                  Salvar
+                </Button>
+              </>
+            </HStack>
           </Flex>
 
+          <SimpleGrid minChildWidth="240px" spacing={['6', '8']} width="100%">
 
-          <Heading size="md" fontWeight="bold">Nome do contato</Heading>
-          <Text mt="2">{data?.contact?.name}</Text>
-          <Heading mt="4" size="md" fontWeight="bold">Email do contato</Heading>
-          <Text mt="2">{data?.contact?.email}</Text>
+            <Input
+              name="email"
+              label="E-mail do contato"
+              error={errors.email}
+              {...register('email')}
+            />
+            
+            <Input
+              name="name"
+              label="Nome do contato"
+              error={errors.name}
+              {...register('name')}
+            />
+          </SimpleGrid>
+          
           <Heading mt="4" size="md" fontWeight="bold">Tags</Heading>
-
+        
           <Table mt="4">
             <Thead>
               <Tr>
@@ -113,29 +158,29 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
               </Tr>
             </Thead>
             <Tbody>
-              {data?.contact?.tags?.map((tag) => (
+              {contact?.tags?.map((tag) => (
                 <Tr key={tag.id}>
                   <Td>
                     {tag.name}
                   </Td>
                   <Td color="gray.500">
-                  <Button
-                    mt="4"
-                    type="submit"
-                    size="sm"
-                    leftIcon={<RiDeleteBin4Line size="16" />}
-                    onClick={() => handleRemoveTag({ contact_id: contact.id, tag_id: tag.id})}
-                    isLoading={removeTag.isLoading}
-                    colorScheme="red"
-                  >
-                    Remover tag
-                  </Button>
+                    <Button
+                      mt="4"
+                      type="submit"
+                      size="sm"
+                      leftIcon={<RiDeleteBin4Line size="16" />}
+                      onClick={() => handleRemoveTag({ contact_id: contact.id, tag_id: tag.id })}
+                      isLoading={removeTag.isLoading}
+                      colorScheme="red"
+                    >
+                      Remover tag
+                    </Button>
                   </Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
-        
+
         </Box>
       </Flex>
     </Box>

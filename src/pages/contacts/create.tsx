@@ -2,14 +2,14 @@ import { withSSRAuth } from "../../utils/withSSRAuth";
 import Head from 'next/head'
 import { Sidebar } from '../../components/Sidebar'
 import { AxiosError } from 'axios'
-import { RiSaveLine } from 'react-icons/ri'
+import { RiSaveLine, RiSearch2Line } from 'react-icons/ri'
 import { useMutation } from 'react-query'
 import { Header } from '../../components/Header'
 import { Button } from '../../components/Form/Button'
 import { Input } from '../../components/Form/Input'
 import * as yup from 'yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Box, Flex, Heading, HStack, useToast, VStack } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, useToast, SimpleGrid, Table, Thead, Tr, Th, Td, Tbody, Icon } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link';
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -121,13 +121,7 @@ export default function CreateContact() {
                 </Button>
               </HStack>
             </Flex>
-            <VStack spacing="6" maxWidth="4xl">
-              <Input
-                label="Nome"
-                error={errors.name}
-                name="name"
-                {...register('name')}
-              />
+            <SimpleGrid minChildWidth="240px" spacing={['6', '8']} width="100%">
 
               <Input
                 label="E-mail"
@@ -135,7 +129,45 @@ export default function CreateContact() {
                 name="email"
                 {...register('email')}
               />
-            </VStack>
+
+              <Input
+                label="Nome"
+                error={errors.name}
+                name="name"
+                {...register('name')}
+              />
+            </SimpleGrid>
+
+            {/* <Heading mt="4" size="md" fontWeight="bold">Tags</Heading>
+            <Box>
+              <Flex as="form">
+                <Input
+                  name="search"
+                  placeholder="Buscar tag"
+                  {...register('search')}
+                />
+                <Button
+                  size="lg"
+                  fontSize="sm"
+                  colorScheme="purple"
+                  ml="2"
+                  maxW={59}
+                >
+                  <Icon as={RiSearch2Line} fontSize="16" />
+                </Button>
+              </Flex>
+            </Box>
+            <Table mt="4">
+              <Thead>
+                <Tr>
+                  <Th>Nome da tag</Th>
+                  <Th>Remover</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+
+              </Tbody>
+            </Table> */}
           </Box>
         </Flex>
       </Box>

@@ -19,7 +19,9 @@ type GetContactDetailsReponse = {
 };
 
 export async function getContacts(contact_id: string): Promise<GetContactDetailsReponse>  {
-  const response = await api.get(`/contacts/${contact_id}`);
+  const response = await api.get(`/contact/show?id=${contact_id}`);
+  debugger
+  console.log(response.data);
   const { data } = response;
   return {  
     contact: data
