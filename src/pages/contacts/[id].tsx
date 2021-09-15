@@ -115,7 +115,7 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
 
             <HStack>
               <>
-                <NextLink href="/tags">
+                <NextLink href="/contacts">
                   <Button size="md" colorScheme="blackAlpha">
                     Cancelar
                   </Button>

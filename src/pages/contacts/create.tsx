@@ -1,15 +1,17 @@
 import { withSSRAuth } from "../../utils/withSSRAuth";
+import React, { useCallback } from 'react';
 import Head from 'next/head'
 import { Sidebar } from '../../components/Sidebar'
 import { AxiosError } from 'axios'
-import { RiSaveLine, RiSearch2Line } from 'react-icons/ri'
+import { RiSaveLine } from 'react-icons/ri'
 import { useMutation } from 'react-query'
 import { Header } from '../../components/Header'
 import { Button } from '../../components/Form/Button'
 import { Input } from '../../components/Form/Input'
+import { AsyncSelect } from '../../components/Form/AsyncSelect'
 import * as yup from 'yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Box, Flex, Heading, HStack, useToast, SimpleGrid, Table, Thead, Tr, Th, Td, Tbody, Icon } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, useToast, SimpleGrid } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link';
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -19,21 +21,30 @@ import { queryClient } from "../../services/queryClient";
 type CreateContactFormData = {
   name: string;
   email: string;
+  tags?: any[];
 }
 
 const createContactFormSchema = yup.object().shape({
   name: yup.string().required('Nome obrigatório'),
   email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
+  tags: yup.array(),
 });
-
 
 export default function CreateContact() {
   const router = useRouter()
   const toast = useToast()
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, control } = useForm({
     resolver: yupResolver(createContactFormSchema)
   });
+
+  const loadTags = useCallback(async search => {
+    const response = await api.post('/tag/index', { page: 1 });
+    return response.data.map(tag => ({
+      value: tag.id,
+      label: tag.name,
+    }));
+  }, []);
 
   const { errors } = formState;
 
@@ -67,18 +78,17 @@ export default function CreateContact() {
     }
   );
 
-
   const handleSaveContato: SubmitHandler<CreateContactFormData> = async data => {
     try {
       await createContact.mutateAsync({
         name: data.name,
         email: data.email,
+        tags: data?.tags?.map(e => e?.value),
       });
     } catch {
       console.log('Error happened')
     }
   };
-
 
   return (
     <>
@@ -122,7 +132,6 @@ export default function CreateContact() {
               </HStack>
             </Flex>
             <SimpleGrid minChildWidth="240px" spacing={['6', '8']} width="100%">
-
               <Input
                 label="E-mail"
                 error={errors.email}
@@ -137,37 +146,14 @@ export default function CreateContact() {
                 {...register('name')}
               />
             </SimpleGrid>
-
-            {/* <Heading mt="4" size="md" fontWeight="bold">Tags</Heading>
-            <Box>
-              <Flex as="form">
-                <Input
-                  name="search"
-                  placeholder="Buscar tag"
-                  {...register('search')}
-                />
-                <Button
-                  size="lg"
-                  fontSize="sm"
-                  colorScheme="purple"
-                  ml="2"
-                  maxW={59}
-                >
-                  <Icon as={RiSearch2Line} fontSize="16" />
-                </Button>
-              </Flex>
-            </Box>
-            <Table mt="4">
-              <Thead>
-                <Tr>
-                  <Th>Nome da tag</Th>
-                  <Th>Remover</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-
-              </Tbody>
-            </Table> */}
+            <SimpleGrid minChildWidth="240px" spacing={['6', '8']} width="100%">
+              <AsyncSelect
+                name="tags"
+                control={control}
+                loadOptions={loadTags}
+                label="Tag"
+                error={errors.tag} />
+            </SimpleGrid>
           </Box>
         </Flex>
       </Box>
