@@ -81,9 +81,11 @@ export default function SignIn() {
             Entrar
           </Button>
           <Link href="/forgot-password" passHref>
+            <>
             <ChakraLink alignSelf="center" mt="4">
               <Text color="gray.500">Esqueci minha senha</Text>
             </ChakraLink>
+            </>
           </Link>
         </Flex>
       </Flex>

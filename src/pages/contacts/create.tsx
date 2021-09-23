@@ -1,3 +1,4 @@
+import { Box, Flex, Heading, HStack, useToast, SimpleGrid } from '@chakra-ui/react';
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import React, { useCallback } from 'react';
 import Head from 'next/head'
@@ -10,10 +11,9 @@ import { Button } from '../../components/Form/Button'
 import { Input } from '../../components/Form/Input'
 import { AsyncSelect } from '../../components/Form/AsyncSelect'
 import * as yup from 'yup'
+
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Box, Flex, Heading, HStack, useToast, SimpleGrid } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import NextLink from 'next/link';
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from "../../services/apiClient";
 import { queryClient } from "../../services/queryClient";
@@ -117,18 +117,21 @@ export default function CreateContact() {
               </Box>
 
               <HStack>
-                <NextLink href="/contacts">
-                  <Button size="md" colorScheme="blackAlpha">
+                <>
+                  <Button
+                    onClick={() => router.push(`/contacts`)}
+                    size="md"
+                    colorScheme="blackAlpha">
                     Cancelar
                   </Button>
-                </NextLink>
-                <Button
-                  type="submit"
-                  size="md"
-                  leftIcon={<RiSaveLine size="24" />}
-                  colorScheme="purple">
-                  Salvar
-                </Button>
+                  <Button
+                    type="submit"
+                    size="md"
+                    leftIcon={<RiSaveLine size="24" />}
+                    colorScheme="purple">
+                    Salvar
+                  </Button>
+                </>
               </HStack>
             </Flex>
             <SimpleGrid minChildWidth="240px" spacing={['6', '8']} width="100%">

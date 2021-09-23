@@ -1,8 +1,8 @@
 import Head from 'next/head'
-import { Box, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, Link as ChakraLink, Icon, Spinner } from '@chakra-ui/react'
-import NextLink from 'next/link';
+import { Box, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, Icon, Spinner } from '@chakra-ui/react';
 import { Sidebar } from '../../components/Sidebar'
 import { Header } from '../../components/Header'
+import { useRouter } from 'next/router'
 import { Button } from '../../components/Form/Button'
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '../../components/Form/Input';
@@ -21,6 +21,7 @@ export default function Contacts() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('')
   const { register, handleSubmit } = useForm();
+  const router = useRouter();
 
   const { data, isLoading, error, isFetching, refetch } = useContacts(page, searchQuery);
 
@@ -81,17 +82,16 @@ export default function Contacts() {
                       <Icon as={RiRefreshLine} fontSize="16" />
                     </Button>
                   </>
-                  <NextLink href="/contacts/create" passHref>
-                    <Button
-                      size="lg"
-                      fontSize="xl"
-                      colorScheme="purple"
-                      ml="2"
-                      maxW={59}
-                    >
-                      <Icon as={RiAddLine} fontSize="16" />
-                    </Button>
-                  </NextLink>
+                  <Button
+                    onClick={() => router.push(`/contacts/create`)}
+                    size="lg"
+                    fontSize="xl"
+                    colorScheme="purple"
+                    ml="2"
+                    maxW={59}
+                  >
+                    <Icon as={RiAddLine} fontSize="16" />
+                  </Button>
                 </Flex>
               </Flex>
             </Flex>
@@ -119,18 +119,15 @@ export default function Contacts() {
                         <Td color="gray.500">{contact.email}</Td>
                         <Td color="gray.500">{contact.name}</Td>
                         <Td>
-                          <NextLink href={`contacts/${contact.id}`}
-                            passHref>
-                            <Button
-                              as="a"
-                              size="sm"
-                              fontSize="sm"
-                              colorScheme="purple"
-                              leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                            >
-                              Editar
-                            </Button>
-                          </NextLink>
+                          <Button
+                            onClick={() => router.push(`contacts/${contact.id}`)}
+                            size="sm"
+                            fontSize="sm"
+                            colorScheme="purple"
+                            leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                          >
+                            Editar
+                          </Button>
                         </Td>
                       </Tr>
                     ))}

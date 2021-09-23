@@ -15,6 +15,7 @@ export function MessageItem({ message }: MessageItemProps) {
       <Td>
         <Box>
           <Link href={`/messages/${message.id}`} passHref>
+            <>
             <ChakraLink
               title="Ver detalhes"
               fontSize="lg"
@@ -22,6 +23,7 @@ export function MessageItem({ message }: MessageItemProps) {
             >
               {message.subject}
             </ChakraLink>
+            </>
           </Link>
           {message.sentAt && (
             <MessageStats messageId={message.id} />

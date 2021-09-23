@@ -3,13 +3,13 @@ import { Header } from '../../components/Header'
 import { RiDeleteBin4Line } from 'react-icons/ri'
 import { Sidebar } from '../../components/Sidebar'
 import { AxiosError } from "axios"
+import { useRouter } from 'next/router';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "react-query"
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import * as yup from 'yup';
 import { RiSaveLine } from 'react-icons/ri';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { Input } from '../../components/Form/Input';
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -45,7 +45,7 @@ const updateContactFormSchema = yup.object().shape({
 
 export default function ContactDetails({ contact }: ContactDetailsProps) {
   const toast = useToast();
-
+  const router = useRouter()
 
   const { register, handleSubmit, formState, setValue } = useForm({
     resolver: yupResolver(updateContactFormSchema)
@@ -115,11 +115,12 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
 
             <HStack>
               <>
-                <NextLink href="/contacts">
-                  <Button size="md" colorScheme="blackAlpha">
-                    Cancelar
-                  </Button>
-                </NextLink>
+                <Button
+                  onClick={() => router.push(`/contacts`)}
+                  size="md"
+                  colorScheme="blackAlpha">
+                  Cancelar
+                </Button>
                 <Button
                   type="submit"
                   size="md"
@@ -139,7 +140,7 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
               error={errors.email}
               {...register('email')}
             />
-            
+
             <Input
               name="name"
               label="Nome do contato"
@@ -147,9 +148,9 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
               {...register('name')}
             />
           </SimpleGrid>
-          
+
           <Heading mt="4" size="md" fontWeight="bold">Tags</Heading>
-        
+
           <Table mt="4">
             <Thead>
               <Tr>

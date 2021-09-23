@@ -57,8 +57,8 @@ export default function Messages() {
             </Box>
 
             <Flex>
-              <Flex 
-                as="form" 
+              <Flex
+                as="form"
                 onSubmit={handleSubmit(handleSearchMessages)}
               >
                 <Input
@@ -79,15 +79,17 @@ export default function Messages() {
                 </Button>
               </Flex>
               <Link href="/messages/create">
-                <Button
-                  size="lg"
-                  fontSize="xl"
-                  colorScheme="purple"
-                  ml="2"
-                  maxW={59}
-                >
-                  <Icon as={RiAddLine} />
-                </Button>
+                <>
+                  <Button
+                    size="lg"
+                    fontSize="xl"
+                    colorScheme="purple"
+                    ml="2"
+                    maxW={59}
+                  >
+                    <Icon as={RiAddLine} />
+                  </Button>
+                </>
               </Link>
             </Flex>
           </Flex>
@@ -106,11 +108,11 @@ export default function Messages() {
             </Tbody>
           </Table>
 
-          <Pagination 
+          <Pagination
             totalCountOfRegisters={data?.totalCount}
             currentPage={page}
             onPageChange={setPage}
-          /> 
+          />
         </Box>
       </Flex>
     </Box>
