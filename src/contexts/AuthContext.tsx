@@ -8,6 +8,7 @@ type User = {
   id: string;
   email: string;
   name: string;
+  role: 'admin' | 'client'
 };
 
 type SignInCredentials = {
@@ -19,7 +20,7 @@ type AuthContextData = {
   signIn: (credentials: SignInCredentials) => Promise<void>;
   signOut: () => void;
   isAuthenticated: boolean;
-  user: User;
+  user: User | undefined;
 };
 
 type AuthProviderProps = {
@@ -31,8 +32,8 @@ export const AuthContext = createContext({} as AuthContextData);
 let authChannel: BroadcastChannel;
 
 export function signOut() {
-  destroyCookie(undefined, process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN)
-  destroyCookie(undefined, process.env.NEXT_PUBLIC_NEXT_REFRESH_TOKEN)
+  destroyCookie(undefined, 'umbriel_access_token', { path: '/' })
+  destroyCookie(undefined, 'umbriel_refresh_token', { path: '/' })
   authChannel?.postMessage('signOut');
   Router.push('/');
 }
@@ -58,14 +59,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const cookies = parseCookies();
-    const token = cookies[process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN];
+    const token = cookies['umbriel_access_token'];
 
     if (token) {
       api.get('/session/me')
         .then(response => {
-          const { id, email, name } = response?.data
+          const { id, email, name, role } = response?.data
 
-          setUser({ id, email, name })
+          setUser({ id, email, name, role })
         })
         .catch(() => {
           signOut();
@@ -82,13 +83,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const { token, refresh_token, user } = response?.data;
 
-      setCookie(undefined, process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN, token, {
-        maxAge: 60 * 60 * 24 * 30, // 30 days
+      setCookie(undefined, 'umbriel_access_token', token, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days - Tempo de armazenamento no browser
         path: '/'
       })
 
-      setCookie(undefined, process.env.NEXT_PUBLIC_NEXT_REFRESH_TOKEN, refresh_token, {
-        maxAge: 60 * 60 * 24 * 30, // 30 days
+      setCookie(undefined, 'umbriel_refresh_token', refresh_token, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days - Tempo de armazenamento no browser
         path: '/'
       })
 
@@ -96,6 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         id: user?.id,
         email: user?.email,
         name: user?.name,
+        role: user?.role
       });
 
       api.defaults.headers['Authorization'] = `Bearer ${token}`;

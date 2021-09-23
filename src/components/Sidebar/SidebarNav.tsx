@@ -1,5 +1,5 @@
-import { VStack, Link, Stack, Text, Flex, Button } from "@chakra-ui/react";
-import { RiMailOpenLine, RiContactsLine, RiDashboardLine, RiPencilRulerLine, RiPriceTag3Line, RiSettings2Line, RiSendPlaneLine, RiLogoutBoxLine } from "react-icons/ri";
+import { Text, Flex, Button } from "@chakra-ui/react";
+import { RiContactsLine, RiDashboardLine, RiPencilRulerLine, RiPriceTag3Line, RiSendPlaneLine, RiLogoutBoxLine } from "react-icons/ri";
 import { NavLink } from "./NavLink";
 import { signOut } from "../../contexts/AuthContext";
 import { NavSection } from "./NavSection";

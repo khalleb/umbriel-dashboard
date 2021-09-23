@@ -1,5 +1,5 @@
 import { withSSRAuth } from "../../utils/withSSRAuth";
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, Link as ChakraLink, Icon, Spinner } from '@chakra-ui/react';
 import Head from 'next/head'
 import { Sidebar } from '../../components/Sidebar'

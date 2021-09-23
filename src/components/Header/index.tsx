@@ -1,8 +1,6 @@
-import { Flex, useBreakpointValue, HStack, Box, IconButton, Icon } from '@chakra-ui/react'
+import { Flex, useBreakpointValue } from '@chakra-ui/react'
 import { Logo } from './Logo';
 import { Profile } from './Profile';
-import { SearchBox } from './SearchBox';
-import { RiMenuLine } from 'react-icons/ri';
 
 export function Header() {
 

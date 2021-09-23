@@ -1,8 +1,8 @@
 import { Box, Td, Tr, Link as ChakraLink } from '@chakra-ui/react'
 
-import { Message } from "../../services/hooks/useMessages";
 
 import Link from 'next/link'
+import { Message } from '../../hooks/messages/useMessages';
 import { MessageStats } from './Stats';
 
 type MessageItemProps = {

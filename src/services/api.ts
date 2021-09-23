@@ -7,37 +7,36 @@ let isRefreshing = false;
 let failedRequestsQueue = [];
 
 export function setupApiClient(ctx = undefined) {
-  const cookies = parseCookies(ctx);
+  let cookies = ctx ? parseCookies(ctx) : parseCookies();
 
   const api = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
     headers: {
-      Authorization: `Bearer ${cookies[process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN]}`
+      Authorization: `Bearer ${cookies['umbriel_access_token']}`
     }
   });
-
   api.interceptors.response.use(
     response => {
       return response;
     },
     (error: AxiosError) => {
       if (error.response.status === 401) {
-        if (error.response.data?.code === "token.expired") {
-          const refreshToken = cookies[process.env.NEXT_PUBLIC_NEXT_REFRESH_TOKEN];
+        if (error.response.data?.message === "token.expired") {
+          cookies = cookies = ctx ? parseCookies(ctx) : parseCookies();
+          const refreshTokenCookie= cookies?.umbriel_refresh_token;
           const originalConfig = error.config;
 
           if (!isRefreshing) {
             isRefreshing = true;
-            api.post("/session/refresh-token", { token: refreshToken })
+            api.post("/session/refresh-token", { token: refreshTokenCookie })
               .then((response) => {
                 const { token, refresh_token } = response.data;
-
-                setCookie(ctx, process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN, token, {
+                setCookie(ctx, 'umbriel_access_token', token, {
                   maxAge: 60 * 60 * 24 * 30, // 30 days
                   path: '/'
                 })
 
-                setCookie(ctx, process.env.NEXT_PUBLIC_NEXT_REFRESH_TOKEN, refresh_token, {
+                setCookie(ctx, 'umbriel_refresh_token', refresh_token, {
                   maxAge: 60 * 60 * 24 * 30, // 30 days
                   path: '/'
                 })
@@ -63,7 +62,6 @@ export function setupApiClient(ctx = undefined) {
             failedRequestsQueue.push({
               onSuccess: (token: string) => {
                 originalConfig.headers['Authorization'] = `Bearer ${token}`
-
                 resolve(api(originalConfig))
               },
               onFailure: (err: AxiosError) => {
@@ -79,9 +77,8 @@ export function setupApiClient(ctx = undefined) {
           }
         }
       }
-
       return Promise.reject(error);
     }
   );
-  return api
+  return api;
 }

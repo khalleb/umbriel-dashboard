@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Box, Flex, Heading, HStack, Table, Icon, Tbody, Td, Text, Th, Thead, Tr, Link as ChakraLink, StackDivider } from '@chakra-ui/react'
+import { Box, Flex, Heading, Table, Icon, Tbody, Text, Th, Thead, Tr, Link as ChakraLink } from '@chakra-ui/react'
 
 import { Header } from '../../components/Header'
 import { Button } from '../../components/Form/Button'

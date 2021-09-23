@@ -1,5 +1,5 @@
 import { HStack, Text, StackDivider, Progress, Flex } from '@chakra-ui/react'
-import { useMessageStats } from '../../services/hooks/useMessageStats'
+import { useMessageStats } from '../../hooks/messages/useMessageStats'
 
 type MessageStatsProps = {
   messageId: string;
