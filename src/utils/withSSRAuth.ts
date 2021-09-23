@@ -10,7 +10,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
     if (!token) {
       return {
         redirect: {
-          destination: '/dashboard',
+          destination: '/',
           permanent: false
         }
       };
@@ -23,7 +23,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
 
       return {
         redirect: {
-          destination: '/dashboard',
+          destination: '/',
           permanent: false
         }
       };

@@ -56,32 +56,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const cookies = parseCookies();
-  //   const token = cookies[process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN];
+  useEffect(() => {
+    const cookies = parseCookies();
+    const token = cookies[process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN];
 
-  //   if (token) {
-  //     api.get('/session/me')
-  //       .then(response => {
-  //         const { id, email, name, active, role } = response.data
+    if (token) {
+      api.get('/session/me')
+        .then(response => {
+          const { id, email, name } = response?.data
 
-  //         setUser({ id, email, name, active, role })
-  //       })
-  //       .catch(() => {
-  //         signOut();
-  //       })
-  //   }
-  // }, [])
+          setUser({ id, email, name })
+        })
+        .catch(() => {
+          signOut();
+        })
+    }
+  }, [])
 
   async function signIn({ email, password }: SignInCredentials) {
-    debugger
     try {
       const response = await api.post('session/auth', {
         email,
         password
       });
 
-      const { token, refresh_token, user } = response.data;
+      const { token, refresh_token, user } = response?.data;
 
       setCookie(undefined, process.env.NEXT_PUBLIC_NEXT_ACCESS_TOKEN, token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
