@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Box, Flex, Heading, SimpleGrid, Table, Thead, Tbody, Tr, Th, Td, Button, useToast, HStack } from "@chakra-ui/react"
 import { Header } from '../../components/Header'
 import { RiDeleteBin4Line } from 'react-icons/ri'
@@ -6,15 +7,21 @@ import { AxiosError } from "axios"
 import { useRouter } from 'next/router';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "react-query"
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup';
 import { RiSaveLine } from 'react-icons/ri';
 import Head from 'next/head';
 import { Input } from '../../components/Form/Input';
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
-import { api } from "../../services/apiClient"
-import { queryClient } from "../../services/queryClient"
+import { api } from "../../services/apiClient";
+import { queryClient } from "../../services/queryClient";
+
+type UpdateContactFormData = {
+  id: string
+  name: string;
+  email: string
+}
 
 type ContactDetailsProps = {
   contact: {
@@ -46,6 +53,8 @@ const updateContactFormSchema = yup.object().shape({
 export default function ContactDetails({ contact }: ContactDetailsProps) {
   const toast = useToast();
   const router = useRouter()
+  const [tags, setTags] = useState(contact?.tags || []);
+
 
   const { register, handleSubmit, formState, setValue } = useForm({
     resolver: yupResolver(updateContactFormSchema)
@@ -60,18 +69,28 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
 
   const removeTag = useMutation(
     async (data: RemoveTagFormData) => {
-      const response = await api.delete(`/contact/delete-tag`, { data: { id_contact: data.contact_id, id_tag: data.tag_id } });
-      return response.data;
+      const response = await api.delete(`/contact/delete-tag`, { data: { id_contact: data?.contact_id, id_tag: data?.tag_id } });
+      return { message: response?.data?.message, id: data?.tag_id };
     },
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if (tags && tags.length > 0) {
+          const newTags = tags.filter(e => e.id !== data?.id);
+          setTags(newTags);
+        }
+        toast({
+          title: data?.message,
+          status: 'success',
+          position: 'top-right',
+          duration: 3000
+        })
         queryClient.invalidateQueries('contact');
       },
       onError: (error: AxiosError) => {
         toast({
-          title: error?.response?.data?.error || 'Houve um erro ao cadastrar a mensagem',
+          title: error?.response?.data?.message || 'Houve um erro ao remover a tag',
           status: 'error',
-          position: 'top',
+          position: 'top-right',
           duration: 3000
         })
       }
@@ -81,16 +100,59 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
   async function handleRemoveTag(data: RemoveTagFormData) {
     try {
       await removeTag.mutateAsync(data);
-
-      toast({
-        description: 'Tag removida com sucesso',
-        status: 'success',
-        position: 'top'
-      })
     } catch {
-      console.log('Error happened')
+      toast({
+        title: 'Error ao remover tag',
+        status: 'success',
+        position: 'top-right',
+        duration: 3000
+      })
     }
   }
+
+  const updateContact = useMutation(
+    async (contact: UpdateContactFormData) => {
+      const response = await api.put('/contact/update', contact);
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('contacts');
+        toast({
+          title: 'Contato alterada com sucesso.',
+          status: 'success',
+          position: 'top-right',
+          duration: 3000
+        })
+        router.push('/contacts');
+      },
+      onError: (error: AxiosError) => {
+        toast({
+          title: error?.response?.data?.message || 'Houve um erro ao tentar altetar o contato',
+          status: 'error',
+          position: 'top-right',
+          duration: 3000
+        })
+      }
+    }
+  );
+
+  const handleUpdateContact: SubmitHandler<UpdateContactFormData> = async data => {
+    try {
+      await updateContact.mutateAsync({
+        id: data.id,
+        name: data.name,
+        email: data.email
+      });
+    } catch {
+      toast({
+        title: 'Houve um erro ao tentar altetar o contato',
+        status: 'error',
+        position: 'top-right',
+        duration: 3000
+      })
+    }
+  };
 
   return (
     <Box>
@@ -102,12 +164,14 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
         <Sidebar />
 
         <Box
+          as="form"
           flex="1"
           ml="6"
           borderRadius={4}
           bgColor="white"
           shadow="0 0 20px rgba(0, 0, 0, 0.05)"
-          p="8">
+          p="8"
+          onSubmit={handleSubmit(handleUpdateContact)}>
           <Flex mb="8" justifyContent="space-between" alignItems="center">
             <Box>
               <Heading size="lg" fontWeight="medium">Detalhes do contato</Heading>
@@ -159,7 +223,7 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
               </Tr>
             </Thead>
             <Tbody>
-              {contact?.tags?.map((tag) => (
+              {tags?.map((tag) => (
                 <Tr key={tag.id}>
                   <Td>
                     {tag.name}
@@ -181,7 +245,6 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
               ))}
             </Tbody>
           </Table>
-
         </Box>
       </Flex>
     </Box>

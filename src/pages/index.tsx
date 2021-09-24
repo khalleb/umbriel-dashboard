@@ -1,4 +1,4 @@
-import { Flex, Button, Stack, Text, Link as ChakraLink } from '@chakra-ui/react';
+import { Flex, Button, Stack, Text, Link as ChakraLink, useToast } from '@chakra-ui/react';
 import Link from 'next/link'
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -22,6 +22,7 @@ const signInFormSchema = yup.object().shape({
 
 export default function SignIn() {
   const { signIn } = useContext(AuthContext);
+  const toast = useToast();
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(signInFormSchema)
   });
@@ -29,9 +30,16 @@ export default function SignIn() {
   const { errors } = formState;
 
   const handleSignIn: SubmitHandler<SignInFormData> = async data => {
-    await signIn(data);
+    const respo = await signIn(data);
+    if (respo?.response?.data) {
+      toast({
+        status: 'error',
+        title: respo?.response?.data?.message,
+        position: 'top-right',
+        duration: 3000
+      })
+    }
   };
-
   return (
     <>
       <Head>
@@ -40,7 +48,7 @@ export default function SignIn() {
       <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center" flexDirection={['column', 'row']}>
         <Stack p={[6, 8]} spacing="4" mr={[0, 0, 0, 100]}>
           <Logo />
-          <Text color="gray.900" letterSpacing="tight" lineHeight="normal" fontSize={["3xl","5xl"]} mb="8" fontWeight="extrabold" maxW={430}>
+          <Text color="gray.900" letterSpacing="tight" lineHeight="normal" fontSize={["3xl", "5xl"]} mb="8" fontWeight="extrabold" maxW={430}>
             Faça login para acessar a dashboard
           </Text>
         </Stack>
@@ -82,9 +90,9 @@ export default function SignIn() {
           </Button>
           <Link href="/forgot-password" passHref>
             <>
-            <ChakraLink alignSelf="center" mt="4">
-              <Text color="gray.500">Esqueci minha senha</Text>
-            </ChakraLink>
+              <ChakraLink alignSelf="center" mt="4">
+                <Text color="gray.500">Esqueci minha senha</Text>
+              </ChakraLink>
             </>
           </Link>
         </Flex>

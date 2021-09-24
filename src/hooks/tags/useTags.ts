@@ -4,6 +4,7 @@ import { api } from '../../services/apiClient';
 type Tag = {
   id: string;
   name: string;
+  active: boolean;
 };
 
 type GetTagsReponse = {
@@ -11,15 +12,9 @@ type GetTagsReponse = {
   totalCount: number;
 };
 
-export async function getTags(page: number, searchQuery?: string): Promise<GetTagsReponse>  {
-  const { data } = await api.post('/tag/index', { page });
-  const tags = data?.list?.map((contact: Tag) => {
-    return {
-      id: contact.id,
-      name: contact.name,
-    };
-
-  });
+export async function getTags(page: number, searchQuery?: string): Promise<GetTagsReponse> {
+  const { data } = await api.post('/tag/index', { page, searchQueryColumn: 'name', searchQueryValue: searchQuery });
+  const tags = data?.list;
   return {
     tags,
     totalCount: data?.total

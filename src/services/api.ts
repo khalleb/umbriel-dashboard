@@ -16,14 +16,12 @@ export function setupApiClient(ctx = undefined) {
     }
   });
   api.interceptors.response.use(
-    response => {
-      return response;
-    },
+    response => { return response; },
     (error: AxiosError) => {
       if (error.response.status === 401) {
         if (error.response.data?.message === "token.expired") {
           cookies = cookies = ctx ? parseCookies(ctx) : parseCookies();
-          const refreshTokenCookie= cookies?.umbriel_refresh_token;
+          const refreshTokenCookie = cookies?.umbriel_refresh_token;
           const originalConfig = error.config;
 
           if (!isRefreshing) {

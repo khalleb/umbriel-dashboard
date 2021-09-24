@@ -14,7 +14,7 @@ type GetContactsReponse = {
 };
 
 export async function getContacts(page: number, searchQuery?: string): Promise<GetContactsReponse> {
-  const { data } = await api.post('/contact/index', { page });
+  const { data } = await api.post('/contact/index', { page, searchQueryColumn: 'email', searchQueryValue: searchQuery });
   const contacts = data?.list?.map((contact: Contact) => {
     return {
       id: contact.id,

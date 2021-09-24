@@ -11,37 +11,37 @@ import { Button } from '../../components/Form/Button'
 import { MdCheckCircle, MdCancel } from 'react-icons/md';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useTags } from '../../hooks/tags/useTags';
 import { Header } from '../../components/Header'
 import { Pagination } from '../../components/Pagination'
 import { api } from '../../services/apiClient';
 import { queryClient } from '../../services/queryClient';
+import { useTemplates } from '../../hooks/templates/useTemplates';
 
-type InactivateActivateTagFormData = {
-  tag_id: string;
-}
-
-type SearchTagsFormData = {
+type SearchTemplatesFormData = {
   search: string;
 };
 
-export default function Tags() {
+type InactivateActivateTemplateFormData = {
+  template_id: string;
+}
+
+export default function Templates() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('')
   const { register, handleSubmit } = useForm();
   const router = useRouter();
   const toast = useToast();
 
-  const { data, isLoading, error, isFetching, refetch } = useTags(page, searchQuery);
+  const { data, isLoading, error, isFetching, refetch } = useTemplates(page, searchQuery);
 
-  const handleSearchTags: SubmitHandler<SearchTagsFormData> = async ({ search }) => {
+  const handleSearchTemplate: SubmitHandler<SearchTemplatesFormData> = async ({ search }) => {
     setPage(1)
     setSearchQuery(search);
   };
 
-  const inactivateActivateTag = useMutation(
-    async (data: InactivateActivateTagFormData) => {
-      const response = await api.get(`tag/inactivate-activate?id=${data.tag_id}`);
+  const inactivateActivateTemplate = useMutation(
+    async (data: InactivateActivateTemplateFormData) => {
+      const response = await api.get(`template/inactivate-activate?id=${data.template_id}`);
       return response.data;
     },
     {
@@ -52,7 +52,7 @@ export default function Tags() {
           position: 'top-right',
           duration: 3000
         })
-        queryClient.invalidateQueries('tags');
+        queryClient.invalidateQueries('templates');
       },
       onError: (error: AxiosError) => {
         toast({
@@ -65,12 +65,12 @@ export default function Tags() {
     },
   );
 
-  async function handleInactivateActivateTag(id: string) {
+  async function handleInactivateActivateTemplate(id: string) {
     try {
-      await inactivateActivateTag.mutateAsync({ tag_id: id });
+      await inactivateActivateTemplate.mutateAsync({ template_id: id });
     } catch {
       toast({
-        title: 'Error ao alterar o status da tag',
+        title: 'Error ao alterar o status do template',
         status: 'error',
         position: 'top-right',
         duration: 3000
@@ -82,7 +82,7 @@ export default function Tags() {
     <>
       <Box>
         <Head>
-          <title>Umbriel | Tags</title>
+          <title>Umbriel | Templates</title>
         </Head>
         <Header />
 
@@ -97,16 +97,16 @@ export default function Tags() {
             p="8">
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
-                <Heading size="lg" fontWeight="medium">Tags</Heading>
-                <Text mt="1" color="gray.400">Listagem completa de tags</Text>
+                <Heading size="lg" fontWeight="medium">Templates</Heading>
+                <Text mt="1" color="gray.400">Listagem completa de templates</Text>
               </Box>
               <Flex>
                 <Flex
                   as="form"
-                  onSubmit={handleSubmit(handleSearchTags)}>
+                  onSubmit={handleSubmit(handleSearchTemplate)}>
                   <Input
                     name="search"
-                    placeholder="Buscar tags"
+                    placeholder="Buscar templates"
                     {...register('search')}
                   />
                   <>
@@ -123,7 +123,7 @@ export default function Tags() {
                     </Button>
                   </>
                   <Button
-                    onClick={() => router.push(`/tags/create`)}
+                    onClick={() => router.push(`/templates/create`)}
                     size="lg"
                     fontSize="xl"
                     colorScheme="purple"
@@ -155,15 +155,15 @@ export default function Tags() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {data.tags.map(tag => (
-                      <Tr key={tag.id}>
-                        <Td color="gray.500">{tag.name}</Td>
-                        <Td>{tag?.active ? (<MdCheckCircle color="#67e480" size={16} />) : (<MdCancel color="#E96379" size={16} />)}</Td>
+                    {data.templates.map(template => (
+                      <Tr key={template.id}>
+                        <Td color="gray.500">{template.name}</Td>
+                        <Td>{template?.active ? (<MdCheckCircle color="#67e480" size={16} />) : (<MdCancel color="#E96379" size={16} />)}</Td>
                         <Td>
                           <HStack>
                             <Tooltip label="Editar">
                               <Circle
-                                onClick={() => router.push(`tags/${tag.id}`)}
+                                onClick={() => router.push(`templates/${template.id}`)}
                                 size="25px"
                                 bg="purple.700"
                                 cursor="pointer"
@@ -172,12 +172,12 @@ export default function Tags() {
                               </Circle>
                             </Tooltip>
                             {
-                              tag?.active
+                              template?.active
                                 ?
                                 (
                                   <Tooltip label="Inativar">
                                     <Circle
-                                      onClick={() => handleInactivateActivateTag(tag?.id)}
+                                      onClick={() => handleInactivateActivateTemplate(template?.id)}
                                       size="25px"
                                       bg="tomato"
                                       cursor="pointer"
@@ -190,7 +190,7 @@ export default function Tags() {
                                 (
                                   <Tooltip label="Ativar">
                                     <Circle
-                                      onClick={() => handleInactivateActivateTag(tag?.id)}
+                                      onClick={() => handleInactivateActivateTemplate(template?.id)}
                                       size="25px"
                                       bg="#67e480"
                                       cursor="pointer"

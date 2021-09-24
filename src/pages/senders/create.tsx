@@ -15,63 +15,60 @@ import { api } from '../../services/apiClient';
 import { queryClient } from '../../services/queryClient';
 import { AxiosError } from 'axios';
 
-type CreateTagFormData = {
-  name: string;
-}
-
-
-const createTagFormSchema = yup.object().shape({
+const createSenderFormSchema = yup.object().shape({
   name: yup.string().required('Nome obrigatório'),
+  email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
 });
 
-export default function CreateTag() {
-  const router = useRouter()
-  const toast = useToast()
+type CreateSenderFormData = {
+  name: string;
+  email: string;
+}
+
+export default function CreateSender() {
+  const router = useRouter();
+  const toast = useToast();
 
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createTagFormSchema)
+    resolver: yupResolver(createSenderFormSchema)
   });
 
   const { errors } = formState;
 
 
-  const createTag = useMutation(
-    async (tag: CreateTagFormData) => {
-      const response = await api.post('/tag/store', tag);
+  const createSender = useMutation(
+    async (sender: CreateSenderFormData) => {
+      const response = await api.post('/sender/store', sender);
       return response.data;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('tags');
-
         toast({
-          title: 'Tag criada com sucesso.',
+          title: 'Remetente criado com sucesso',
           status: 'success',
           position: 'top-right',
           duration: 3000
         })
 
-        router.push('/tags');
+        queryClient.invalidateQueries('senders');
+        router.push('/senders');
       },
       onError: (error: AxiosError) => {
         toast({
-          title: error?.response?.data?.message || 'Houve um erro ao criar a tag',
+          title: error?.response?.data?.message || 'Houve um erro ao criar o remetente',
           status: 'error',
           position: 'top-right',
           duration: 3000
         })
-
       }
     }
   );
 
-  const handleSaveTag: SubmitHandler<CreateTagFormData> = async data => {
+  const handleSaveSender: SubmitHandler<CreateSenderFormData> = async data => {
     try {
-      await createTag.mutateAsync({
-        name: data.name,
-      });
-    } catch {
-      console.log('Error happened')
+      await createSender.mutateAsync(data);
+    } catch(error) {
+      console.log(error)
     }
   };
 
@@ -79,7 +76,7 @@ export default function CreateTag() {
     <>
       <Box>
         <Head>
-          <title>Criar tag | Umbriel</title>
+          <title>Criar remetente | Umbriel</title>
         </Head>
 
         <Header />
@@ -95,15 +92,15 @@ export default function CreateTag() {
             bgColor="white"
             shadow="0 0 20px rgba(0, 0, 0, 0.05)"
             p="8"
-            onSubmit={handleSubmit(handleSaveTag)}>
+            onSubmit={handleSubmit(handleSaveSender)}>
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
-                <Heading size="lg" fontWeight="medium">Criar tag</Heading>
+                <Heading size="lg" fontWeight="medium">Criar remetente</Heading>
               </Box>
 
               <HStack>
                 <Button
-                  onClick={() => router.push(`/tags`)}
+                  onClick={() => router.push(`/senders`)}
                   size="md"
                   colorScheme="blackAlpha">
                   Cancelar
@@ -119,6 +116,12 @@ export default function CreateTag() {
             </Flex>
             <VStack spacing="6" maxWidth="4xl">
               <Input
+                label="E-mail"
+                error={errors.email}
+                name="email"
+                {...register('email')}
+              />
+              <Input
                 label="Nome"
                 error={errors.name}
                 name="name"
@@ -130,9 +133,7 @@ export default function CreateTag() {
       </Box>
     </>
   )
-
 }
-
 
 export const getServerSideProps = withSSRAuth(async ctx => {
   return {

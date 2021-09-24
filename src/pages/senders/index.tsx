@@ -1,64 +1,62 @@
+import { useState } from "react";
+import { Sidebar } from '../../components/Sidebar'
+import { Header } from '../../components/Header'
+import { Input } from '../../components/Form/Input';
+import { Button } from '../../components/Form/Button'
+import { Pagination } from '../../components/Pagination'
 import Head from 'next/head'
 import { Box, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, Icon, Spinner, HStack, Circle, Tooltip, useToast } from '@chakra-ui/react';
-import { Sidebar } from '../../components/Sidebar'
 import { AxiosError } from "axios";
-import { Header } from '../../components/Header'
 import { useRouter } from 'next/router'
-import { Button } from '../../components/Form/Button'
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Input } from '../../components/Form/Input';
-import { withSSRAuth } from '../../utils/withSSRAuth'
-import { RiAddLine, RiRefreshLine, RiPencilLine, RiShutDownLine } from 'react-icons/ri';
 import { MdCheckCircle, MdCancel } from 'react-icons/md';
-import { useState } from 'react';
-import { Pagination } from '../../components/Pagination'
+import { RiAddLine, RiRefreshLine, RiPencilLine, RiShutDownLine } from 'react-icons/ri';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from "react-query";
-import { useContacts } from '../../hooks/contacts/useContacts';
-import { api } from '../../services/apiClient';
-import { queryClient } from '../../services/queryClient';
+import { withSSRAuth } from "../../utils/withSSRAuth";
+import { useSenders } from "../../hooks/senders/useSenders";
+import { api } from "../../services/apiClient";
+import { queryClient } from "../../services/queryClient";
 
-
-type SearchContactsFormData = {
+type SearchSendersFormData = {
   search: string;
 };
 
-type RemoveTagFormData = {
-  contact_id: string;
+type InactivateActivateSenderFormData = {
+  sender_id: string;
 }
 
-export default function Contacts() {
+export default function Senders() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('')
   const { register, handleSubmit } = useForm();
   const router = useRouter();
   const toast = useToast();
 
-  const { data, isLoading, error, isFetching, refetch } = useContacts(page, searchQuery);
+  const { data, isLoading, error, isFetching, refetch } = useSenders(page, searchQuery);
 
-  const handleSearchContacts: SubmitHandler<SearchContactsFormData> = async ({ search }) => {
+  const handleSearchSenders: SubmitHandler<SearchSendersFormData> = async ({ search }) => {
     setPage(1)
     setSearchQuery(search);
   };
 
-  const inscribeDescribeContact = useMutation(
-    async (data: RemoveTagFormData) => {
-      const response = await api.get(`contact/inscribe-describe?id=${data.contact_id}`);
+  const inactivateActivateSender = useMutation(
+    async (data: InactivateActivateSenderFormData) => {
+      const response = await api.get(`sender/inactivate-activate?id=${data.sender_id}`);
       return response.data;
     },
     {
       onSuccess: (data) => {
-        console.log(data);
         toast({
           title: data?.message,
           status: 'success',
           position: 'top-right',
           duration: 3000
         })
-        queryClient.invalidateQueries('contacts');
+        queryClient.invalidateQueries('senders');
       },
       onError: (error: AxiosError) => {
         toast({
-          title: error?.response?.data?.message || 'Houve um erro ao mudar o status do contato',
+          title: error?.response?.data?.message || 'Houve um erro ao mudar o status do remetente',
           status: 'error',
           position: 'top-right',
           duration: 3000
@@ -67,13 +65,13 @@ export default function Contacts() {
     },
   );
 
-  async function handleInscribeDescribeContact(id: string) {
+  async function handleInactivateActivateSender(id: string) {
     try {
-      await inscribeDescribeContact.mutateAsync({ contact_id: id });
+      await inactivateActivateSender.mutateAsync({ sender_id: id });
     } catch {
       toast({
-        title: 'Error ao alterar o status do contato',
-        status: 'success',
+        title: 'Error ao alterar o status do remetente',
+        status: 'error',
         position: 'top-right',
         duration: 3000
       })
@@ -84,7 +82,7 @@ export default function Contacts() {
     <>
       <Box>
         <Head>
-          <title>Umbriel | Contatos</title>
+          <title>Umbriel | Remetentes</title>
         </Head>
         <Header />
         <Flex w="100%" my="6" maxWidth={1580} mx="auto" maxHeight="calc(100vh - 128px)" px="6">
@@ -98,16 +96,16 @@ export default function Contacts() {
             p="8">
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
-                <Heading size="lg" fontWeight="medium">Contatos</Heading>
-                <Text mt="1" color="gray.400">Listagem completa de contatos</Text>
+                <Heading size="lg" fontWeight="medium">Remetentes</Heading>
+                <Text mt="1" color="gray.400">Listagem completa de remetentes</Text>
               </Box>
               <Flex>
                 <Flex
                   as="form"
-                  onSubmit={handleSubmit(handleSearchContacts)}>
+                  onSubmit={handleSubmit(handleSearchSenders)}>
                   <Input
                     name="search"
-                    placeholder="Buscar contatos"
+                    placeholder="Buscar remetentes"
                     {...register('search')}
                   />
                   <>
@@ -124,7 +122,7 @@ export default function Contacts() {
                     </Button>
                   </>
                   <Button
-                    onClick={() => router.push(`/contacts/create`)}
+                    onClick={() => router.push(`/senders/create`)}
                     size="lg"
                     fontSize="xl"
                     colorScheme="purple"
@@ -143,7 +141,7 @@ export default function Contacts() {
                 </Flex>
               ) : error ? (
                 <Flex justify="center">
-                  <Text>Falha ao obter a lista de contatos</Text>
+                  <Text>Falha ao obter a lista de remetentes</Text>
                 </Flex>
               ) : (
                 <>
@@ -157,16 +155,16 @@ export default function Contacts() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {data.contacts.map(contact => (
-                        <Tr key={contact.id}>
-                          <Td color="gray.500">{contact.email}</Td>
-                          <Td color="gray.500">{contact.name}</Td>
-                          <Td>{contact?.subscribed ? (<MdCheckCircle color="#67e480" size={16} />) : (<MdCancel color="#E96379" size={16} />)}</Td>
+                      {data.senders.map(sender => (
+                        <Tr key={sender.id}>
+                          <Td color="gray.500">{sender.email}</Td>
+                          <Td color="gray.500">{sender.name}</Td>
+                          <Td>{sender?.active ? (<MdCheckCircle color="#67e480" size={16} />) : (<MdCancel color="#E96379" size={16} />)}</Td>
                           <Td>
                             <HStack>
                               <Tooltip label="Editar">
                                 <Circle
-                                  onClick={() => router.push(`contacts/${contact.id}`)}
+                                  onClick={() => router.push(`senders/${sender.id}`)}
                                   size="25px"
                                   bg="purple.700"
                                   cursor="pointer"
@@ -175,12 +173,12 @@ export default function Contacts() {
                                 </Circle>
                               </Tooltip>
                               {
-                                contact?.subscribed
+                                sender?.active
                                   ?
                                   (
                                     <Tooltip label="Inativar">
                                       <Circle
-                                        onClick={() => handleInscribeDescribeContact(contact?.id)}
+                                        onClick={() => handleInactivateActivateSender(sender?.id)}
                                         size="25px"
                                         bg="tomato"
                                         cursor="pointer"
@@ -193,7 +191,7 @@ export default function Contacts() {
                                   (
                                     <Tooltip label="Ativar">
                                       <Circle
-                                        onClick={() => handleInscribeDescribeContact(contact?.id)}
+                                        onClick={() => handleInactivateActivateSender(sender?.id)}
                                         size="25px"
                                         bg="#67e480"
                                         cursor="pointer"

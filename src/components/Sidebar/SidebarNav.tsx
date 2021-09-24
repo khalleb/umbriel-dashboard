@@ -1,5 +1,5 @@
-import { Text, Flex, Button } from "@chakra-ui/react";
-import { RiContactsLine, RiDashboardLine, RiPencilRulerLine, RiPriceTag3Line, RiSendPlaneLine, RiLogoutBoxLine } from "react-icons/ri";
+import { Text, Flex, Button, Stack } from "@chakra-ui/react";
+import { RiContactsLine, RiDashboardLine, RiPencilRulerLine, RiMailOpenLine, RiPriceTag3Line, RiSendPlaneLine, RiLogoutBoxLine,RiUser3Line } from "react-icons/ri";
 import { NavLink } from "./NavLink";
 import { signOut } from "../../contexts/AuthContext";
 import { NavSection } from "./NavSection";
@@ -20,13 +20,21 @@ export function SidebarNav() {
       borderRadius={4}
       direction="column"
     >
-      <NavSection title="GERAL">
-        <NavLink icon={RiDashboardLine} href="/dashboard">Painel</NavLink>
-        <NavLink icon={RiContactsLine} href="/contacts">Contatos</NavLink>
-        <NavLink icon={RiPriceTag3Line} href="/tags">Tags</NavLink>
-        <NavLink icon={RiSendPlaneLine} href="/senders">Remetentes</NavLink>
-        <NavLink icon={RiPencilRulerLine} href="/templates">Templates</NavLink>
-      </NavSection>
+      <Stack Stack spacing="8">
+        <NavSection title="GERAL">
+          <NavLink icon={RiDashboardLine} href="/dashboard">Painel</NavLink>
+          <NavLink icon={RiContactsLine} href="/contacts">Contatos</NavLink>
+          <NavLink icon={RiPriceTag3Line} href="/tags">Tags</NavLink>
+          <NavLink icon={RiPencilRulerLine} href="/templates">Templates</NavLink>
+          <NavLink icon={RiMailOpenLine} href="/mesages">Mensagens</NavLink>
+        </NavSection>
+
+        <NavSection title="SISTEMA">
+          <NavLink icon={RiSendPlaneLine} href="/senders">Remetentes</NavLink>
+          <NavLink icon={RiUser3Line} href="/users">Usuários</NavLink>
+        </NavSection>
+
+      </Stack>
 
       <Button
         onClick={handleSignOut}

@@ -1,5 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from 'react';
-
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import Router from 'next/router';
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { api } from '../services/apiClient';
@@ -17,7 +16,7 @@ type SignInCredentials = {
 };
 
 type AuthContextData = {
-  signIn: (credentials: SignInCredentials) => Promise<void>;
+  signIn: (credentials: SignInCredentials) => Promise<any>;
   signOut: () => void;
   isAuthenticated: boolean;
   user: User | undefined;
@@ -105,6 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       Router.push('/dashboard');
     } catch (err) {
       console.log(err);
+      return err;
     }
   }
 

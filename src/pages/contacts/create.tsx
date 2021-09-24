@@ -39,8 +39,8 @@ export default function CreateContact() {
   });
 
   const loadTags = useCallback(async search => {
-    const response = await api.post('/tag/index', { page: 1 });
-    return response.data.map(tag => ({
+    const response = await api.post('/tag/index', { page: 1, status: 'active' });
+    return response?.data?.list?.map(tag => ({
       value: tag.id,
       label: tag.name,
     }));
@@ -60,7 +60,7 @@ export default function CreateContact() {
         toast({
           title: 'Contato criado com sucesso.',
           status: 'success',
-          position: 'top',
+          position: 'top-right',
           duration: 3000
         })
 
@@ -68,17 +68,16 @@ export default function CreateContact() {
       },
       onError: (error: AxiosError) => {
         toast({
-          title: error?.response?.data?.error || 'Houve um erro ao criar o contato',
+          title: error?.response?.data?.message || 'Houve um erro ao tentar criar o contato. Tente novamente',
           status: 'error',
-          position: 'top',
+          position: 'top-right',
           duration: 3000
         })
-
       }
     }
   );
 
-  const handleSaveContato: SubmitHandler<CreateContactFormData> = async data => {
+  const handleSaveContatc: SubmitHandler<CreateContactFormData> = async data => {
     try {
       await createContact.mutateAsync({
         name: data.name,
@@ -86,7 +85,12 @@ export default function CreateContact() {
         tags: data?.tags?.map(e => e?.value),
       });
     } catch {
-      console.log('Error happened')
+      toast({
+        title: 'Erro ao criar contato',
+        status: 'error',
+        position: 'top-right',
+        duration: 3000
+      })
     }
   };
 
@@ -101,7 +105,6 @@ export default function CreateContact() {
 
         <Flex width="100%" my="6" maxWidth={1480} marginX="auto">
           <Sidebar />
-
           <Box
             as="form"
             flex="1"
@@ -110,7 +113,7 @@ export default function CreateContact() {
             bgColor="white"
             shadow="0 0 20px rgba(0, 0, 0, 0.05)"
             p="8"
-            onSubmit={handleSubmit(handleSaveContato)}>
+            onSubmit={handleSubmit(handleSaveContatc)}>
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
                 <Heading size="lg" fontWeight="medium">Criar contato</Heading>

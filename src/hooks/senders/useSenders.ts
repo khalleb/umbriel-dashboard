@@ -6,6 +6,7 @@ type Sender = {
   id: string;
   name: string;
   email: string;
+  active: boolean;
 };
 
 type GetSendersReponse = {
@@ -14,19 +15,12 @@ type GetSendersReponse = {
 };
 
 export async function getSenders(page: number, searchQuery?: string): Promise<GetSendersReponse> {
-  const { data, headers } = await api.post('/sender/index', { page });
-  const totalCount = Number(headers['x-total-count']);
-  const senders = data.map((sender: Sender) => {
-    return {
-      id: sender.id,
-      name: sender.name,
-      email: sender.email,
-    };
-  });
+  const { data } = await api.post('/sender/index', { page, searchQueryColumn: 'email', searchQueryValue: searchQuery });
+  const senders = data?.list;
 
   return {
     senders,
-    totalCount
+    totalCount: data?.total
   };
 }
 

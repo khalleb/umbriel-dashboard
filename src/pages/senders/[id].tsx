@@ -16,57 +16,60 @@ import { queryClient } from '../../services/queryClient';
 import { AxiosError } from 'axios';
 import { setupApiClient } from '../../services/api';
 
-type TagDetailsProps = {
-  tag: {
+type SenderDetailsProps = {
+  sender: {
     id: string
     active: boolean
     name: string
+    email: string
   }
 }
 
-type UpdateTagFormData = {
-  id: string;
-  name: string;
-}
-
-const updateTagFormSchema = yup.object().shape({
+const updateSenderFormSchema = yup.object().shape({
   id: yup.string().required('ID obrigatório'),
   name: yup.string().required('Nome obrigatório'),
+  email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
 });
 
-export default function TagDetails({ tag }: TagDetailsProps) {
+type UpdateSenderFormData = {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export default function SenderDetails({ sender }: SenderDetailsProps) {
   const router = useRouter();
   const toast = useToast();
 
   const { register, handleSubmit, formState, setValue } = useForm({
-    resolver: yupResolver(updateTagFormSchema)
+    resolver: yupResolver(updateSenderFormSchema)
   });
 
-  setValue('id', tag?.id);
-  setValue('name', tag?.name);
+  setValue('id', sender?.id);
+  setValue('name', sender?.name);
+  setValue('email', sender?.email);
 
   const { errors } = formState;
 
-
-  const updateTag = useMutation(
-    async (tag: UpdateTagFormData) => {
-      const response = await api.put('/tag/update', tag);
+  const updateSender = useMutation(
+    async (sender: UpdateSenderFormData) => {
+      const response = await api.put('/sender/update', sender);
       return response.data;
     },
     {
       onSuccess: (data) => {
-        queryClient.invalidateQueries('tags');
+        queryClient.invalidateQueries('senders');
         toast({
           title: data?.message,
           status: 'success',
           position: 'top-right',
           duration: 3000
         })
-        router.push('/tags');
+        router.push('/senders');
       },
       onError: (error: AxiosError) => {
         toast({
-          title: error?.response?.data?.message || 'Houve um erro ao alterar a tag',
+          title: error?.response?.data?.message || 'Houve um erro ao alterar o remetente',
           status: 'error',
           position: 'top-right',
           duration: 3000
@@ -75,12 +78,9 @@ export default function TagDetails({ tag }: TagDetailsProps) {
     }
   );
 
-  const handleUpdateTag: SubmitHandler<UpdateTagFormData> = async data => {
+  const handleUpdateSender: SubmitHandler<UpdateSenderFormData> = async data => {
     try {
-      await updateTag.mutateAsync({
-        id: data.id,
-        name: data.name,
-      });
+      await updateSender.mutateAsync(data);
     } catch (err) {
       console.log(err);
     }
@@ -90,7 +90,7 @@ export default function TagDetails({ tag }: TagDetailsProps) {
     <>
       <Box>
         <Head>
-          <title>Detalhes da tag | Umbriel</title>
+          <title>Detalhes da remetente | Umbriel</title>
         </Head>
 
         <Header />
@@ -105,15 +105,15 @@ export default function TagDetails({ tag }: TagDetailsProps) {
             bgColor="white"
             shadow="0 0 20px rgba(0, 0, 0, 0.05)"
             p="8"
-            onSubmit={handleSubmit(handleUpdateTag)}>
+            onSubmit={handleSubmit(handleUpdateSender)}>
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
-                <Heading size="lg" fontWeight="medium">Detalhes da tag</Heading>
+                <Heading size="lg" fontWeight="medium">Detalhes da remetente</Heading>
               </Box>
               <HStack>
                 <>
                   <Button
-                    onClick={() => router.push(`/tags`)}
+                    onClick={() => router.push(`/senders`)}
                     size="md"
                     colorScheme="blackAlpha">
                     Cancelar
@@ -129,6 +129,12 @@ export default function TagDetails({ tag }: TagDetailsProps) {
               </HStack>
             </Flex>
             <VStack spacing="6" maxWidth="4xl">
+              <Input
+                name="email"
+                label="E-mail"
+                error={errors.email}
+                {...register('email')}
+              />
               <Input
                 name="name"
                 label="Nome"
@@ -147,18 +153,18 @@ export const getServerSideProps = withSSRAuth(async ctx => {
   const { id } = ctx.params;
   const api = setupApiClient(ctx);
 
-  const messageDataResponse = await api.get(`/tag/show?id=${id}`);
+  const messageDataResponse = await api.get(`/sender/show?id=${id}`);
   if (!messageDataResponse.data) {
     return {
       redirect: {
-        destination: '/tags',
+        destination: '/senders',
         permanent: false
       }
     };
   }
   return {
     props: {
-      tag: messageDataResponse.data
+      sender: messageDataResponse.data
     }
   };
 });
