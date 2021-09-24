@@ -14,9 +14,8 @@ type GetContactsReponse = {
 };
 
 export async function getContacts(page: number, searchQuery?: string): Promise<GetContactsReponse> {
-  const { data, headers } = await api.post('/contact/index', { page });
-  const totalCount = Number(headers['x-total-count']);
-  const contacts = data.map((contact: Contact) => {
+  const { data } = await api.post('/contact/index', { page });
+  const contacts = data?.list?.map((contact: Contact) => {
     return {
       id: contact.id,
       name: contact.name,
@@ -27,7 +26,7 @@ export async function getContacts(page: number, searchQuery?: string): Promise<G
 
   return {
     contacts,
-    totalCount
+    totalCount: data?.total
   };
 }
 

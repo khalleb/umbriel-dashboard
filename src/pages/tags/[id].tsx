@@ -11,7 +11,6 @@ import { Input } from '../../components/Form/Input';
 import { Header } from '../../components/Header';
 import { Button } from '../../components/Form/Button';
 import { Sidebar } from '../../components/Sidebar';
-import NextLink from 'next/link';
 import { api } from '../../services/apiClient';
 import { queryClient } from '../../services/queryClient';
 import { AxiosError } from 'axios';
@@ -43,7 +42,7 @@ export default function TagDetails({ tag }: TagDetailsProps) {
   const { register, handleSubmit, formState, setValue } = useForm({
     resolver: yupResolver(updateTagFormSchema)
   });
-  
+
   setValue('id', tag?.id);
   setValue('name', tag?.name);
 
@@ -121,11 +120,12 @@ export default function TagDetails({ tag }: TagDetailsProps) {
 
               <HStack>
                 <>
-                  <NextLink href="/tags">
-                    <Button size="md" colorScheme="blackAlpha">
-                      Cancelar
-                    </Button>
-                  </NextLink>
+                  <Button
+                    onClick={() => router.push(`/tags`)}
+                    size="md"
+                    colorScheme="blackAlpha">
+                    Cancelar
+                  </Button>
                   <Button
                     type="submit"
                     size="md"

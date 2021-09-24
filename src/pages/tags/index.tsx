@@ -1,12 +1,12 @@
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import { useForm } from 'react-hook-form';
-import { Box, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, Link as ChakraLink, Icon, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, Icon, Spinner } from '@chakra-ui/react';
 import Head from 'next/head'
 import { Sidebar } from '../../components/Sidebar'
-import NextLink from 'next/link';
 import { RiAddLine, RiRefreshLine, RiSearch2Line, RiPencilLine } from 'react-icons/ri';
 import { Input } from '../../components/Form/Input';
 import { Button } from '../../components/Form/Button'
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useTags } from '../../hooks/tags/useTags';
 import { Header } from '../../components/Header'
@@ -15,7 +15,8 @@ import { Pagination } from '../../components/Pagination'
 export default function Tags() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('')
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
+  const router = useRouter();
 
   const { data, isLoading, error, isFetching, refetch } = useTags(page, searchQuery);
 
@@ -71,17 +72,16 @@ export default function Tags() {
                       <Icon as={RiRefreshLine} fontSize="16" />
                     </Button>
                   </>
-                  <NextLink href="/tags/create" passHref>
-                    <Button
-                      size="lg"
-                      fontSize="xl"
-                      colorScheme="purple"
-                      ml="2"
-                      maxW={59}
-                    >
-                      <Icon as={RiAddLine} fontSize="16" />
-                    </Button>
-                  </NextLink>
+                  <Button
+                    onClick={() => router.push(`/tags/create`)}
+                    size="lg"
+                    fontSize="xl"
+                    colorScheme="purple"
+                    ml="2"
+                    maxW={59}
+                  >
+                    <Icon as={RiAddLine} fontSize="16" />
+                  </Button>
                 </Flex>
               </Flex>
             </Flex>
@@ -108,18 +108,15 @@ export default function Tags() {
                       <Tr key={tag.id}>
                         <Td color="gray.500">{tag.name}</Td>
                         <Td>
-                          <NextLink href={`tags/${tag.id}`}
-                            passHref>
-                            <Button
-                              as="a"
-                              size="sm"
-                              fontSize="sm"
-                              colorScheme="purple"
-                              leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                            >
-                              Editar
-                            </Button>
-                          </NextLink>
+                          <Button
+                            onClick={() => router.push(`tags/${tag.id}`)}
+                            size="sm"
+                            fontSize="sm"
+                            colorScheme="purple"
+                            leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                          >
+                            Editar
+                          </Button>
                         </Td>
                       </Tr>
                     ))}

@@ -37,7 +37,7 @@ export default function Contacts() {
           <title>Umbriel | Contatos</title>
         </Head>
         <Header />
-        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+        <Flex w="100%" my="6" maxWidth={1580} mx="auto" maxHeight="calc(100vh - 128px)" px="6">
           <Sidebar />
           <Box
             flex="1"
@@ -95,52 +95,58 @@ export default function Contacts() {
                 </Flex>
               </Flex>
             </Flex>
-            {isLoading ? (
-              <Flex justify="center">
-                <Spinner />
-              </Flex>
-            ) : error ? (
-              <Flex justify="center">
-                <Text>Falha ao obter dados dos usuários</Text>
-              </Flex>
-            ) : (
-              <>
-                <Table colorScheme="whiteAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th>E-mail</Th>
-                      <Th>Nome</Th>
-                      <Th width="8"></Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {data.contacts.map(contact => (
-                      <Tr key={contact.id}>
-                        <Td color="gray.500">{contact.email}</Td>
-                        <Td color="gray.500">{contact.name}</Td>
-                        <Td>
-                          <Button
-                            onClick={() => router.push(`contacts/${contact.id}`)}
-                            size="sm"
-                            fontSize="sm"
-                            colorScheme="purple"
-                            leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                          >
-                            Editar
-                          </Button>
-                        </Td>
+            <Box>
+              {isLoading ? (
+                <Flex justify="center">
+                  <Spinner />
+                </Flex>
+              ) : error ? (
+                <Flex justify="center">
+                  <Text>Falha ao obter dados dos usuários</Text>
+                </Flex>
+              ) : (
+                <>
+                  <Table colorScheme="whiteAlpha" >
+                    <Thead>
+                      <Tr>
+                        <Th>E-mail</Th>
+                        <Th>Nome</Th>
+                        <Th width="8"></Th>
                       </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
+                    </Thead>
+                    <Tbody>
+                      {data.contacts.map(contact => (
+                        <Tr key={contact.id}>
+                          <Td color="gray.500">{contact.email}</Td>
+                          <Td color="gray.500">{contact.name}</Td>
+                          <Td>
+                            <Button
+                              onClick={() => router.push(`contacts/${contact.id}`)}
+                              size="sm"
+                              fontSize="sm"
+                              colorScheme="purple"
+                              leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                            >
+                              Editar
+                            </Button>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
 
-                <Pagination
-                  totalCountOfRegisters={data?.totalCount}
-                  currentPage={page}
-                  onPageChange={setPage}
-                />
-              </>
-            )}
+                  <Box>
+                    <Pagination
+                      totalCountOfRegisters={data?.totalCount}
+                      currentPage={page}
+                      onPageChange={setPage}
+                    />
+                  </Box>
+
+                </>
+              )}
+
+            </Box>
           </Box>
         </Flex>
       </Box>

@@ -12,9 +12,8 @@ type GetTagsReponse = {
 };
 
 export async function getTags(page: number, searchQuery?: string): Promise<GetTagsReponse>  {
-  const { data, headers } = await api.post('/tag/index', { page });
-  const totalCount = Number(headers['x-total-count']);
-  const tags = data.map((contact: Tag) => {
+  const { data } = await api.post('/tag/index', { page });
+  const tags = data?.list?.map((contact: Tag) => {
     return {
       id: contact.id,
       name: contact.name,
@@ -23,7 +22,7 @@ export async function getTags(page: number, searchQuery?: string): Promise<GetTa
   });
   return {
     tags,
-    totalCount
+    totalCount: data?.total
   };
 }
 
