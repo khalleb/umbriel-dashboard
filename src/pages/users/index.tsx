@@ -15,33 +15,33 @@ import { Header } from '../../components/Header'
 import { Pagination } from '../../components/Pagination'
 import { api } from '../../services/apiClient';
 import { queryClient } from '../../services/queryClient';
-import { useTemplates } from '../../hooks/templates/useTemplates';
+import { useUsers } from '../../hooks/users/useUsers';
 
-type SearchTemplatesFormData = {
+type SearchUsersFormData = {
   search: string;
 };
 
-type InactivateActivateTemplateFormData = {
-  template_id: string;
+type InactivateActivateUserFormData = {
+  user_id: string;
 }
 
-export default function Templates() {
+export default function Users() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('')
   const { register, handleSubmit } = useForm();
   const router = useRouter();
   const toast = useToast();
 
-  const { data, isLoading, error, isFetching, refetch } = useTemplates(page, searchQuery);
+  const { data, isLoading, error, isFetching, refetch } = useUsers(page, searchQuery);
 
-  const handleSearchTemplate: SubmitHandler<SearchTemplatesFormData> = async ({ search }) => {
+  const handleSearchUser: SubmitHandler<SearchUsersFormData> = async ({ search }) => {
     setPage(1)
     setSearchQuery(search);
   };
 
-  const inactivateActivateTemplate = useMutation(
-    async (data: InactivateActivateTemplateFormData) => {
-      const response = await api.get(`template/inactivate-activate?id=${data.template_id}`);
+  const inactivateActivateUser = useMutation(
+    async (data: InactivateActivateUserFormData) => {
+      const response = await api.get(`user/inactivate-activate?id=${data.user_id}`);
       return response.data;
     },
     {
@@ -52,7 +52,7 @@ export default function Templates() {
           position: 'top-right',
           duration: 3000
         })
-        queryClient.invalidateQueries('templates');
+        queryClient.invalidateQueries('users');
       },
       onError: (error: AxiosError) => {
         toast({
@@ -65,12 +65,13 @@ export default function Templates() {
     },
   );
 
-  async function handleInactivateActivateTemplate(id: string) {
+
+  async function handleInactivateActivateUser(id: string) {
     try {
-      await inactivateActivateTemplate.mutateAsync({ template_id: id });
+      await inactivateActivateUser.mutateAsync({ user_id: id });
     } catch {
       toast({
-        title: 'Error ao alterar o status do template',
+        title: 'Error ao alterar o status do usuário',
         status: 'error',
         position: 'top-right',
         duration: 3000
@@ -82,7 +83,7 @@ export default function Templates() {
     <>
       <Box>
         <Head>
-          <title>Umbriel | Templates</title>
+          <title>Umbriel | Usuários</title>
         </Head>
         <Header />
 
@@ -97,16 +98,16 @@ export default function Templates() {
             p="8">
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
-                <Heading size="lg" fontWeight="medium">Templates</Heading>
-                <Text mt="1" color="gray.400">Listagem completa de templates</Text>
+                <Heading size="lg" fontWeight="medium">Usuários</Heading>
+                <Text mt="1" color="gray.400">Listagem completa de usuários</Text>
               </Box>
               <Flex>
                 <Flex
                   as="form"
-                  onSubmit={handleSubmit(handleSearchTemplate)}>
+                  onSubmit={handleSubmit(handleSearchUser)}>
                   <Input
                     name="search"
-                    placeholder="Buscar templates"
+                    placeholder="Buscar usuários"
                     {...register('search')}
                   />
                   <>
@@ -123,7 +124,7 @@ export default function Templates() {
                     </Button>
                   </>
                   <Button
-                    onClick={() => router.push(`/templates/create`)}
+                    onClick={() => router.push(`/users/create`)}
                     size="lg"
                     fontSize="xl"
                     colorScheme="purple"
@@ -142,7 +143,7 @@ export default function Templates() {
               </Flex>
             ) : error ? (
               <Flex justify="center">
-                <Text>Falha ao obter dados dos usuários</Text>
+                <Text>Falha a lista de usuários</Text>
               </Flex>
             ) : (
               <>
@@ -150,20 +151,24 @@ export default function Templates() {
                   <Thead>
                     <Tr>
                       <Th>Nome</Th>
+                      <Th>E-mail</Th>
+                      <Th>Tipo</Th>
                       <Th >Status</Th>
                       <Th width="8">Ações</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {data.templates.map(template => (
-                      <Tr key={template.id}>
-                        <Td color="gray.500">{template.name}</Td>
-                        <Td>{template?.active ? (<MdCheckCircle color="#67e480" size={16} />) : (<MdCancel color="#E96379" size={16} />)}</Td>
+                    {data.users.map(user => (
+                      <Tr key={user.id}>
+                        <Td color="gray.500">{user.name}</Td>
+                        <Td color="gray.500">{user.email}</Td>
+                        <Td color="gray.500">{user.role}</Td>
+                        <Td>{user?.active ? (<MdCheckCircle color="#67e480" size={16} />) : (<MdCancel color="#E96379" size={16} />)}</Td>
                         <Td>
                           <HStack>
                             <Tooltip label="Editar">
                               <Circle
-                                onClick={() => router.push(`templates/${template.id}`)}
+                                onClick={() => router.push(`users/${user.id}`)}
                                 size="25px"
                                 bg="purple.700"
                                 cursor="pointer"
@@ -172,12 +177,12 @@ export default function Templates() {
                               </Circle>
                             </Tooltip>
                             {
-                              template?.active
+                              user?.active
                                 ?
                                 (
                                   <Tooltip label="Inativar">
                                     <Circle
-                                      onClick={() => handleInactivateActivateTemplate(template?.id)}
+                                      onClick={() => handleInactivateActivateUser(user?.id)}
                                       size="25px"
                                       bg="tomato"
                                       cursor="pointer"
@@ -190,7 +195,7 @@ export default function Templates() {
                                 (
                                   <Tooltip label="Ativar">
                                     <Circle
-                                      onClick={() => handleInactivateActivateTemplate(template?.id)}
+                                      onClick={() => handleInactivateActivateUser(user?.id)}
                                       size="25px"
                                       bg="#67e480"
                                       cursor="pointer"
@@ -220,6 +225,7 @@ export default function Templates() {
     </>
   );
 }
+
 
 export const getServerSideProps = withSSRAuth(async ctx => {
   return {

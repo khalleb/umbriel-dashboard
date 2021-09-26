@@ -20,7 +20,7 @@ export function Header() {
     >
       <Flex
         width="100%"
-        maxWidth={1480}
+        maxWidth={1580}
         marginX="auto"
         alignItems="center"
         justifyContent="space-between">

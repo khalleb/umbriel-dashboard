@@ -95,7 +95,7 @@ export default function CreateTemplate() {
         <title>Criar template | Umbriel</title>
       </Head>
       <Header />
-      <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+      <Flex w="100%" my="6" maxWidth={1580} mx="auto" px="6">
         <Sidebar />
         <Box
           as="form"

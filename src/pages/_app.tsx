@@ -1,7 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import { theme } from '../styles/theme';
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { AuthProvider } from '../contexts/AuthContext';
 import { QueryClientProvider } from 'react-query';
 import { queryClient } from '../services/queryClient';
@@ -14,7 +13,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </ChakraProvider>
       </AuthProvider>
-      <ReactQueryDevtools />
     </QueryClientProvider>
   )
 }

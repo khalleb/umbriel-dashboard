@@ -1,5 +1,6 @@
-import { Box, Flex, Heading, HStack, useToast, VStack } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, useToast, VStack, RadioGroup, Stack, Radio, SimpleGrid } from '@chakra-ui/react'
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from 'react';
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -15,42 +16,49 @@ import { api } from '../../services/apiClient';
 import { queryClient } from '../../services/queryClient';
 import { AxiosError } from 'axios';
 
-const createSenderFormSchema = yup.object().shape({
+
+const createUserFormSchema = yup.object().shape({
   name: yup.string().required('Nome obrigatório'),
   email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
+  password: yup.string().required('Senha obrigatória'),
+  password_confirmation: yup.string().required('Confirmar a senha é obrigatório'),
 });
 
-type CreateSenderFormData = {
+type CreateUserFormData = {
   name: string;
   email: string;
+  password: string;
+  password_confirmation: string;
+  role: string;
 }
 
-export default function CreateSender() {
+export default function CreateUser() {
   const router = useRouter();
   const toast = useToast();
+  const [role, setRole] = useState('client');
 
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createSenderFormSchema)
+    resolver: yupResolver(createUserFormSchema)
   });
 
   const { errors } = formState;
 
-  const createSender = useMutation(
-    async (sender: CreateSenderFormData) => {
-      const response = await api.post('/sender/store', sender);
+  const createUser = useMutation(
+    async (user: CreateUserFormData) => {
+      const response = await api.post('/user/store', user);
       return response.data;
     },
     {
       onSuccess: () => {
         toast({
-          title: 'Remetente criado com sucesso',
+          title: 'Usuário criado com sucesso',
           status: 'success',
           position: 'top-right',
           duration: 3000
         })
 
-        queryClient.invalidateQueries('senders');
-        router.push('/senders');
+        queryClient.invalidateQueries('users');
+        router.push('/users');
       },
       onError: (error: AxiosError) => {
         toast({
@@ -63,10 +71,16 @@ export default function CreateSender() {
     }
   );
 
-  const handleSaveSender: SubmitHandler<CreateSenderFormData> = async data => {
+  const handleSaveUser: SubmitHandler<CreateUserFormData> = async data => {
     try {
-      await createSender.mutateAsync(data);
-    } catch(error) {
+      await createUser.mutateAsync({
+        email: data?.email,
+        name: data.name,
+        password: data.password,
+        password_confirmation: data.password_confirmation,
+        role
+      });
+    } catch (error) {
       console.log(error)
     }
   };
@@ -75,7 +89,7 @@ export default function CreateSender() {
     <>
       <Box>
         <Head>
-          <title>Criar remetente | Umbriel</title>
+          <title>Criar usuário | Umbriel</title>
         </Head>
 
         <Header />
@@ -91,15 +105,15 @@ export default function CreateSender() {
             bgColor="white"
             shadow="0 0 20px rgba(0, 0, 0, 0.05)"
             p="8"
-            onSubmit={handleSubmit(handleSaveSender)}>
+            onSubmit={handleSubmit(handleSaveUser)}>
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
-                <Heading size="lg" fontWeight="medium">Criar remetente</Heading>
+                <Heading size="lg" fontWeight="medium">Criar usuário</Heading>
               </Box>
 
               <HStack>
                 <Button
-                  onClick={() => router.push(`/senders`)}
+                  onClick={() => router.push(`/users`)}
                   size="md"
                   colorScheme="blackAlpha">
                   Cancelar
@@ -113,7 +127,17 @@ export default function CreateSender() {
                 </Button>
               </HStack>
             </Flex>
-            <VStack spacing="6" maxWidth="4xl">
+            <VStack spacing="6">
+              <RadioGroup onChange={setRole} value={role}>
+                <Stack spacing={5} direction="row">
+                  <Radio colorScheme="red" value="admin">
+                    Adinistrador
+                  </Radio>
+                  <Radio colorScheme="green" value="client">
+                    Cliente
+                  </Radio>
+                </Stack>
+              </RadioGroup>
               <Input
                 label="E-mail"
                 error={errors.email}
@@ -126,6 +150,23 @@ export default function CreateSender() {
                 name="name"
                 {...register('name')}
               />
+              <SimpleGrid minChildWidth="240px" spacing={['6', '8']} width="100%">
+                <Input
+                  label="Senha"
+                  type="password"
+                  error={errors.password}
+                  name="password"
+                  {...register('password')}
+                />
+
+                <Input
+                  label="Confirmar Senha"
+                  type="password"
+                  error={errors.password_confirmation}
+                  name="password_confirmation"
+                  {...register('password_confirmation')}
+                />
+              </SimpleGrid>
             </VStack>
           </Box>
         </Flex>

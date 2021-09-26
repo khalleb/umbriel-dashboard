@@ -95,7 +95,7 @@ export default function SenderDetails({ sender }: SenderDetailsProps) {
 
         <Header />
 
-        <Flex width="100%" my="6" maxWidth={1480} marginX="auto">
+        <Flex width="100%" my="6" maxWidth={1580} marginX="auto">
           <Sidebar />
           <Box
             as="form"

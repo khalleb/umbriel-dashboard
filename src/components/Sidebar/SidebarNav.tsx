@@ -26,7 +26,7 @@ export function SidebarNav() {
           <NavLink icon={RiContactsLine} href="/contacts">Contatos</NavLink>
           <NavLink icon={RiPriceTag3Line} href="/tags">Tags</NavLink>
           <NavLink icon={RiPencilRulerLine} href="/templates">Templates</NavLink>
-          <NavLink icon={RiMailOpenLine} href="/mesages">Mensagens</NavLink>
+          <NavLink icon={RiMailOpenLine} href="/messages">Mensagens</NavLink>
         </NavSection>
 
         <NavSection title="SISTEMA">
