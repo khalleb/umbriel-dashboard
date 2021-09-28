@@ -688,6 +688,13 @@
     react-icons "^4.2.0"
     to-style "^1.3.3"
 
+"@draft-js-plugins/hashtag@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@draft-js-plugins/hashtag/-/hashtag-4.2.1.tgz#c8cc90587915c049f9c35ab441e6bc64a9476f28"
+  integrity sha512-KDMliO9huEnPR+4oysBQUoVpS4KDv9C/qMolwO3uNrXqPfJQnFFJmYOET+uwwP+bg58a5EnSltDsd4Ir6n6LOg==
+  dependencies:
+    clsx "^1.0.4"
+
 "@draft-js-plugins/inline-toolbar@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@draft-js-plugins/inline-toolbar/-/inline-toolbar-4.1.2.tgz#057e23f3eb72d994043d286e50065caaa3f9efe3"
@@ -705,7 +712,7 @@
     linkify-it "^3.0.2"
     tlds "^1.221.1"
 
-"@draft-js-plugins/static-toolbar@^4.1.0":
+"@draft-js-plugins/static-toolbar@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@draft-js-plugins/static-toolbar/-/static-toolbar-4.1.2.tgz#c029d42f640cf79051ef2237070aba1fdd6d9937"
   integrity sha512-fMicbvfw9Gwb5ni698yETOOHFXy+fEG00x6wd6lnDG9jUm8mQqg5JXYqob1t2R9CdSJPySCAHnaiv+PfHz/tPQ==
@@ -1037,18 +1044,10 @@
     "@types/draft-js" "*"
     "@types/react" "*"
 
-"@types/draft-js@*":
+"@types/draft-js@*", "@types/draft-js@^0.11.5":
   version "0.11.5"
   resolved "https://registry.yarnpkg.com/@types/draft-js/-/draft-js-0.11.5.tgz#53e0c91b8c297b6ba88e6b1440a56efc81b6d70b"
   integrity sha512-rf33PMmHMOcTR4HyUcdheTB+1Wpmj5bMLIEDSHoXMAYnkYPO58TLcUxYdDy5chrGyzwNrsFHxwFX2NvbEOQVWA==
-  dependencies:
-    "@types/react" "*"
-    immutable "~3.7.4"
-
-"@types/draft-js@^0.10.44":
-  version "0.10.45"
-  resolved "https://registry.yarnpkg.com/@types/draft-js/-/draft-js-0.10.45.tgz#4ab5b0785fcacdea7d5a836d0024158fa8108e70"
-  integrity sha512-ozmVQEI088kGQfY2XPB0b+YRNbkv1mxdxcLieBLCc2F4IkVWMs6mnIaEbBRExmM3H/Amm9CvhlmIYmDL4CjBvA==
   dependencies:
     "@types/react" "*"
     immutable "~3.7.4"
@@ -1236,11 +1235,6 @@ add-px-to-style@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/add-px-to-style/-/add-px-to-style-1.0.0.tgz#d0c135441fa8014a8137904531096f67f28f263a"
   integrity sha1-0ME1RB+oAUqBN5BFMQlvZ/KPJjo=
-
-add@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
-  integrity sha1-JI8Kn25aUo7yKV2+7DBTITCuIjU=
 
 ajv@^6.10.0, ajv@^6.12.4:
   version "6.12.6"
@@ -2082,28 +2076,12 @@ draft-convert@^2.1.11:
     immutable "~3.7.4"
     invariant "^2.2.1"
 
-draft-js-buttons@^2.0.1, draft-js-buttons@^2.0.2:
+draft-js-buttons@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/draft-js-buttons/-/draft-js-buttons-2.0.2.tgz#d96d0dcec9e224a9d62f2543a50f5f1cbef84000"
   integrity sha512-qC3vkZ4ZvKe86Uskf5CsZxgo4Rt6ITAE51sbiI5YCMasanXdMVRwbF4fQonMyahds1tgj9EeBNePOBnlKTz9gQ==
   dependencies:
     clsx "^1.0.4"
-
-draft-js-plugins-editor@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/draft-js-plugins-editor/-/draft-js-plugins-editor-3.0.0.tgz#196d1e065e2c29faebaab4ec081b734fdef294a2"
-  integrity sha512-bFEL0FUIPg9VK3KSeBZ3D+uMqQEVe4Cv7++LWCMASRH02jy6x2f87NRxSZLzTQES5+oL6Qg+OEUlaTn409145A==
-  dependencies:
-    immutable "~3.7.4"
-    prop-types "^15.5.8"
-
-draft-js-static-toolbar-plugin@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/draft-js-static-toolbar-plugin/-/draft-js-static-toolbar-plugin-3.0.1.tgz#fcb22e683a82d9acafba6e61adaa149168a51482"
-  integrity sha512-CBBwc2O5A0UVES4ZsOQUIezvYRrqzoyE0k9gep3v2uQVEzJuc1wmIV0MROey9pUY+UivBQ4T9WVkwFBpf8NU1w==
-  dependencies:
-    draft-js-buttons "^2.0.1"
-    prop-types "^15.5.8"
 
 draft-js@^0.11.7:
   version "0.11.7"

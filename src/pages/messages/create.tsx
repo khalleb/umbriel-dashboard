@@ -1,13 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import { Box, Divider, Flex, FormControl, FormLabel, Heading, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, useToast, VStack } from '@chakra-ui/react';
 import { yupResolver } from "@hookform/resolvers/yup";
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import { Select } from '../../components/Form/Select';
 import { convertToHTML } from 'draft-convert';
-import { EditorState } from 'draft-js';
+
 import { RiSaveLine } from 'react-icons/ri';
 import { useMutation } from 'react-query'
 import * as yup from 'yup';
@@ -20,6 +20,8 @@ import { api } from '../../services/apiClient';
 import { queryClient } from '../../services/queryClient';
 import { AxiosError } from 'axios';
 import { setupApiClient } from '../../services/api';
+import { EditorState } from 'draft-js';
+
 
 const TextEditor = dynamic(() => import("../../components/Editor"), {
   ssr: false,
@@ -79,11 +81,11 @@ const renderAsHTMLConfig = {
       if (isUrlExpression.test(block.text)) {
         return <a href={block.text}>{block.text}</a>;
       }
-      return <p/>;
+      return <p />;
     }
 
     if (block.type === 'PARAGRAPH') {
-      return <p/>;
+      return <p />;
     }
   },
   entityToHTML: (entity, originalText) => {
@@ -158,6 +160,7 @@ export default function CreateMessage() {
   //     }
   //   }
   // );
+
 
   useEffect(() => {
     async function loadSenders() {
@@ -312,12 +315,12 @@ export default function CreateMessage() {
                         name="subject"
                         {...register('subject')}
                       />
-                      {/* <TextEditor
+                      <TextEditor
                         error={errors.content}
                         label="Corpo do e-mail"
                         name="content"
                         control={control}
-                      /> */}
+                      />
                     </VStack>
                   </TabPanel>
                 </TabPanels>

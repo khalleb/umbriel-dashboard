@@ -1,21 +1,16 @@
+import React from 'react';
+import { FormControl, FormLabel, Box, FormErrorMessage, Text } from '@chakra-ui/react'
+import { DefaultDraftBlockRenderMap } from "draft-js";
 import { default as DraftEditor } from "@draft-js-plugins/editor"
 import createEmojiPlugin from '@draft-js-plugins/emoji';
 import createLinkifyPlugin from '@draft-js-plugins/linkify';
-import { Map } from 'immutable';
-
-import { FormControl, FormLabel, Box, FormErrorMessage, Text } from '@chakra-ui/react'
-
 import createLinkPlugin from '@draft-js-plugins/anchor';
 import createInlineToolbarPlugin from '@draft-js-plugins/inline-toolbar';
+import { ItalicButton, BoldButton, UnderlineButton } from '@draft-js-plugins/buttons';
+import { Map } from 'immutable';
 
-import {
-  ItalicButton,
-  BoldButton,
-  UnderlineButton,
-} from '@draft-js-plugins/buttons';
 
 const linkPlugin = createLinkPlugin();
-
 const inlineToolbarPlugin = createInlineToolbarPlugin();
 
 const { InlineToolbar } = inlineToolbarPlugin;
@@ -30,7 +25,6 @@ import '@draft-js-plugins/inline-toolbar/lib/plugin.css';
 import { Controller, Control } from 'react-hook-form'
 
 import editorStyles from '../../styles/lib/draft-js/editorStyles.module.css';
-import { DefaultDraftBlockRenderMap } from "draft-js";
 
 const emojiPlugin = createEmojiPlugin({
   useNativeArt: true,
@@ -63,7 +57,7 @@ type EditorProps = {
   control: Control<FormValues>;
   label?: string;
   description?: string;
-  error?: any; 
+  error?: any;
 }
 
 export default function Editor({ name, control, label, description, error }: EditorProps) {
@@ -72,7 +66,7 @@ export default function Editor({ name, control, label, description, error }: Edi
       {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
       {description && <Text mb="4" fontSize="small" colorScheme="gray">{description}</Text>}
       <Box
-        borderColor={!!error ? 'red.500': 'gray.200' }
+        borderColor={!!error ? 'red.500' : 'gray.200'}
         borderWidth={2}
         borderRadius={4}
         paddingRight="4"
@@ -82,15 +76,13 @@ export default function Editor({ name, control, label, description, error }: Edi
         <Controller
           name={name}
           control={control}
-          render={({
-            field: { onChange, value },
-          }) => (
+          render={({ field: { onChange, value } }) => (
             <div className={editorStyles.editor}>
               <DraftEditor
                 blockStyleFn={myBlockStyleFn}
                 editorState={value}
                 onChange={onChange}
-                plugins={[emojiPlugin, linkifyPlugin, inlineToolbarPlugin, linkPlugin ]}
+                plugins={[emojiPlugin, linkifyPlugin, inlineToolbarPlugin, linkPlugin]}
                 blockRenderMap={extendedBlockRenderMap}
               />
               <EmojiSuggestions />
@@ -109,7 +101,7 @@ export default function Editor({ name, control, label, description, error }: Edi
               </InlineToolbar>
             </div>
           )}
-          />
+        />
       </Box>
       {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
