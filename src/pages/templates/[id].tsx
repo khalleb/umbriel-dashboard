@@ -48,7 +48,7 @@ export default function TemplateDetails({ template }: TemplategDetailsProps) {
   const router = useRouter();
   const toast = useToast();
 
-  const { register, handleSubmit, formState, control, setValue } = useForm({
+  const { register, handleSubmit, formState, control, setValue } = useForm<any>({
     resolver: yupResolver(updateTemplateFormSchema)
   });
 

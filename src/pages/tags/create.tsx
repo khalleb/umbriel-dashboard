@@ -28,7 +28,7 @@ export default function CreateTag() {
   const router = useRouter()
   const toast = useToast()
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState } = useForm<any>({
     resolver: yupResolver(createTagFormSchema)
   });
 

@@ -23,7 +23,7 @@ const signInFormSchema = yup.object().shape({
 export default function SignIn() {
   const { signIn } = useContext(AuthContext);
   const toast = useToast();
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState } = useForm<any>({
     resolver: yupResolver(signInFormSchema)
   });
 

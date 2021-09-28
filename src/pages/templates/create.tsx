@@ -41,7 +41,7 @@ export default function CreateTemplate() {
   const router = useRouter()
   const toast = useToast()
 
-  const { register, handleSubmit, control, formState } = useForm({
+  const { register, handleSubmit, control, formState } = useForm<any>({
     defaultValues: {
       name: '',
       content: '{{ message_content }}',

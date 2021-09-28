@@ -56,7 +56,7 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
   const [tags, setTags] = useState(contact?.tags || []);
 
 
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm<any>({
     resolver: yupResolver(updateContactFormSchema)
   });
 

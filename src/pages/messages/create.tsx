@@ -3,13 +3,10 @@ import { Box, Divider, Flex, FormControl, FormLabel, Heading, HStack, Tab, TabLi
 import { yupResolver } from "@hookform/resolvers/yup";
 import dynamic from 'next/dynamic';
 import { useRouter } from "next/router";
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import { Select } from '../../components/Form/Select';
-import { convertToHTML } from 'draft-convert';
-
 import { RiSaveLine } from 'react-icons/ri';
-import { useMutation } from 'react-query'
 import * as yup from 'yup';
 import Head from 'next/head';
 import { Input } from '../../components/Form/Input';
@@ -17,11 +14,7 @@ import { Header } from '../../components/Header';
 import { Button } from '../../components/Form/Button';
 import { Sidebar } from '../../components/Sidebar';
 import { api } from '../../services/apiClient';
-import { queryClient } from '../../services/queryClient';
-import { AxiosError } from 'axios';
-import { setupApiClient } from '../../services/api';
 import { EditorState } from 'draft-js';
-
 
 const TextEditor = dynamic(() => import("../../components/Editor"), {
   ssr: false,
@@ -105,7 +98,7 @@ export default function CreateMessage() {
   const [tags, setTags] = useState<Tag[]>([]);
 
 
-  const { register, handleSubmit, control, watch, formState } = useForm({
+  const { register, handleSubmit, control, watch, formState } = useForm<any>({
     defaultValues: {
       sender: '',
       tags: '',
@@ -331,7 +324,6 @@ export default function CreateMessage() {
       </Box>
     </>
   )
-
 }
 
 export const getServerSideProps = withSSRAuth(async ctx => {

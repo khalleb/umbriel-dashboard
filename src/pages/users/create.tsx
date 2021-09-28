@@ -37,7 +37,7 @@ export default function CreateUser() {
   const toast = useToast();
   const [role, setRole] = useState('client');
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState } = useForm<any>({
     resolver: yupResolver(createUserFormSchema)
   });
 

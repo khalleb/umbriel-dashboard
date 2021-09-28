@@ -41,7 +41,7 @@ export default function SenderDetails({ sender }: SenderDetailsProps) {
   const router = useRouter();
   const toast = useToast();
 
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm<any>({
     resolver: yupResolver(updateSenderFormSchema)
   });
 

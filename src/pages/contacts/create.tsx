@@ -34,7 +34,7 @@ export default function CreateContact() {
   const router = useRouter()
   const toast = useToast()
 
-  const { register, handleSubmit, formState, control } = useForm({
+  const { register, handleSubmit, formState, control } = useForm<any>({
     resolver: yupResolver(createContactFormSchema)
   });
 

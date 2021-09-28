@@ -38,7 +38,7 @@ export default function TagDetails({ tag }: TagDetailsProps) {
   const router = useRouter();
   const toast = useToast();
 
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm<any>({
     resolver: yupResolver(updateTagFormSchema)
   });
 

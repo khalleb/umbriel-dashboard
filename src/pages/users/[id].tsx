@@ -45,7 +45,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
   const router = useRouter();
   const [role, setRole] = useState(user.role);
 
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm<any>({
     resolver: yupResolver(updateUserFormSchema)
   });
 
