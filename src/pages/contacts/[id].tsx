@@ -46,8 +46,8 @@ type RemoveTagFormData = {
 
 const updateContactFormSchema = yup.object().shape({
   id: yup.string().required('ID obrigatório'),
-  name: yup.string().required('Nome obrigatório'),
   email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
+  name: yup.string().nullable(),
 });
 
 export default function ContactDetails({ contact }: ContactDetailsProps) {
@@ -141,8 +141,8 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
     try {
       await updateContact.mutateAsync({
         id: data.id,
-        name: data.name,
-        email: data.email
+        name: data?.name || null,
+        email: data?.email
       });
     } catch {
       toast({

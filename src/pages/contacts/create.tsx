@@ -25,8 +25,8 @@ type CreateContactFormData = {
 }
 
 const createContactFormSchema = yup.object().shape({
-  name: yup.string().required('Nome obrigatório'),
   email: yup.string().email('Precisa ser um e-mail').required('E-mail obrigatório'),
+  name: yup.string(),
   tags: yup.array(),
 });
 
@@ -80,7 +80,7 @@ export default function CreateContact() {
   const handleSaveContatc: SubmitHandler<CreateContactFormData> = async data => {
     try {
       await createContact.mutateAsync({
-        name: data.name,
+        name: data?.name || null,
         email: data.email,
         tags: data?.tags?.map(e => e?.value),
       });

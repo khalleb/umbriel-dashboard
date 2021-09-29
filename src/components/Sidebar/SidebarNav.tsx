@@ -23,8 +23,8 @@ export function SidebarNav() {
       <Stack Stack spacing="8">
         <NavSection title="GERAL">
           <NavLink icon={RiDashboardLine} href="/dashboard">Painel</NavLink>
-          <NavLink icon={RiContactsLine} href="/contacts">Contatos</NavLink>
           <NavLink icon={RiPriceTag3Line} href="/tags">Tags</NavLink>
+          <NavLink icon={RiContactsLine} href="/contacts">Contatos</NavLink>
           <NavLink icon={RiPencilRulerLine} href="/templates">Templates</NavLink>
           <NavLink icon={RiMailOpenLine} href="/messages">Mensagens</NavLink>
         </NavSection>
