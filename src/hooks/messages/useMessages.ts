@@ -12,12 +12,28 @@ type GetMessagesReponse = {
   totalCount: number;
 };
 
-export async function getMessages(page: number, searchQuery?: string): Promise<GetMessagesReponse>  {
+export async function getMessages(page: number, searchQuery?: string): Promise<GetMessagesReponse> {
   const { data } = await api.post('/message/index', { page, searchQueryColumn: 'name', searchQueryValue: searchQuery });
   const messages = data?.list;
 
+  const messagespPasrse: Message[] = await Promise.all(
+    messages.map(async (message: Message) => {
+      return {
+        id: message.id,
+        subject: message.subject,
+        sent_at: message.sent_at !== null ? new Date(message.sent_at).toLocaleDateString('pt-br', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : null
+      };
+    })
+  );
+
   return {
-    messages,
+    messages: messagespPasrse,
     totalCount: data?.total
   };
 }
