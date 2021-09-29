@@ -36,7 +36,7 @@ export default function UserMessages({ message }: MessageDetailsProps) {
 
   const sendMessage = useMutation(
     async (messageId: string) => {
-      const response = await api.post(`message/send?id=${messageId}`);
+      const response = await api.get(`message/send?id=${messageId}`);
       return response.data;
     },
     {

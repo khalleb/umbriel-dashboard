@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Box, Divider, Flex, FormControl, FormLabel, Heading, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, useToast, VStack } from '@chakra-ui/react';
 import { yupResolver } from "@hookform/resolvers/yup";
 import dynamic from 'next/dynamic';
+import { useMutation } from 'react-query';
+import { convertToHTML } from 'draft-convert';
+import { AxiosError } from 'axios';
 import { useRouter } from "next/router";
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import { Select } from '../../components/Form/Select';
 import { RiSaveLine } from 'react-icons/ri';
@@ -15,6 +18,7 @@ import { Button } from '../../components/Form/Button';
 import { Sidebar } from '../../components/Sidebar';
 import { api } from '../../services/apiClient';
 import { EditorState } from 'draft-js';
+import { queryClient } from '../../services/queryClient';
 
 const TextEditor = dynamic(() => import("../../components/Editor"), {
   ssr: false,
@@ -47,8 +51,8 @@ type SaveMessageFormData = {
 type CreateMessageFormData = {
   subject: string;
   body: string;
-  templateId: string;
-  senderId: string;
+  template_id: string;
+  sender_id: string;
   tags: string[];
 }
 
@@ -126,34 +130,32 @@ export default function CreateMessage() {
 
   const { errors } = formState;
 
-  // const createMessage = useMutation(
-  //   async (message: CreateMessageFormData) => {
-  //     const response = await api.post('/message/store', message);
-
-  //     return response?.data;
-  //   },
-  //   {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries('messages');
-  //       toast({
-  //         title: 'Mensagem criada com sucesso.',
-  //         status: 'success',
-  //         position: 'top-right',
-  //         duration: 3000
-  //       })
-  //       router.push('/messages');
-  //     },
-  //     onError: (error: AxiosError) => {
-  //       toast({
-  //         title: error?.response?.data?.message || 'Houve um erro ao cadastrar a mensagem',
-  //         status: 'error',
-  //         position: 'top-right',
-  //         duration: 3000
-  //       })
-  //     }
-  //   }
-  // );
-
+  const createMessage = useMutation(
+    async (message: CreateMessageFormData) => {
+      const response = await api.post('/message/store', message);
+      return response?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('messages');
+        toast({
+          title: 'Mensagem criada com sucesso.',
+          status: 'success',
+          position: 'top-right',
+          duration: 3000
+        })
+        router.push('/messages');
+      },
+      onError: (error: AxiosError) => {
+        toast({
+          title: error?.response?.data?.message || 'Houve um erro ao cadastrar a mensagem',
+          status: 'error',
+          position: 'top-right',
+          duration: 3000
+        })
+      }
+    }
+  );
 
   useEffect(() => {
     async function loadSenders() {
@@ -182,21 +184,21 @@ export default function CreateMessage() {
     loadTemplates()
   }, [])
 
-  // const handleSaveMessage: SubmitHandler<SaveMessageFormData> = async data => {
-  //   try {
-  //     const currentContent = data.content.getCurrentContent();
-  //     const htmlFormattedBody = convertToHTML(renderAsHTMLConfig)(currentContent as any)
-  //     await createMessage.mutateAsync({
-  //       senderId: data.sender,
-  //       subject: data.subject,
-  //       tags: data.tags,
-  //       body: htmlFormattedBody,
-  //       templateId: data.template
-  //     });
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // };
+  const handleSaveMessage: SubmitHandler<SaveMessageFormData> = async data => {
+    try {
+      const currentContent = data.content.getCurrentContent();
+      const htmlFormattedBody = convertToHTML(renderAsHTMLConfig)(currentContent as any)
+      await createMessage.mutateAsync({
+        sender_id: data.sender,
+        subject: data.subject,
+        tags: data?.tags,
+        body: htmlFormattedBody,
+        template_id: data.template
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
   return (
     <>
@@ -216,7 +218,8 @@ export default function CreateMessage() {
             borderRadius={4}
             bgColor="white"
             shadow="0 0 20px rgba(0, 0, 0, 0.05)"
-            p="8">
+            p="8"
+            onSubmit={handleSubmit(handleSaveMessage)}>
             <Flex mb="8" justifyContent="space-between" alignItems="center">
               <Box>
                 <Heading size="lg" fontWeight="medium">Criar mensagem</Heading>
