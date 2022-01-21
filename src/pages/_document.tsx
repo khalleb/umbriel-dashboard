@@ -4,7 +4,9 @@ import Document, {
   Head,
   Main,
   NextScript
-} from 'next/document'
+} from 'next/document';
+
+
 import { config } from '../styles/config'
 
 export default class MyDocument extends Document {
