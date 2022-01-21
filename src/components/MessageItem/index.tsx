@@ -17,7 +17,6 @@ export function MessageItem({ message }: MessageItemProps) {
         <Box>
           {message.subject}
           {/* {message.sent_at && (<MessageStats messageId={message.id} />)} */}
-          {message.sent_at}
         </Box>
       </Td>
       <Td color="gray.500">{message.sent_at || 'Não enviada'}</Td>
