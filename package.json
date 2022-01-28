@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.8",
@@ -22,7 +23,7 @@
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@hookform/resolvers": "2.6.0",
-    "@next/bundle-analyzer": "^11.1.2",
+    "@next/bundle-analyzer": "^12.0.8",
     "@types/react-select": "^4.0.18",
     "@unform/core": "^2.1.6",
     "@unform/web": "^2.1.6",
